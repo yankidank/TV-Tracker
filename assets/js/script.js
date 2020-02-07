@@ -3,6 +3,7 @@ var searchQuery
 function renderTV(searchQuery){
   var tvAPISearch = 'https://api.tvmaze.com/search/shows?q='+searchQuery
   $.getJSON(tvAPISearch, function(tv) {
+    // Remove previous search results
     $("#tvColumn").empty()
     console.log(tv)
     tv.forEach(function(val) {
@@ -34,12 +35,15 @@ function renderTV(searchQuery){
   })
 }
 $(document).ready(function(){
+  // Detect enter key press
   $('#searchInput').keypress(function(event){
     var keycode = (event.keyCode ? event.keyCode : event.which);
     if(keycode == '13'){
-      renderTV()	
+      searchQuery = $("#searchInput").val()
+      renderTV(searchQuery)	
     }
   });
+  // Detect click on submit button
   $("#searchSubmit").click(function(){
     searchQuery = $("#searchInput").val()
     console.log(searchQuery)
