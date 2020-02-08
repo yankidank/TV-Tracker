@@ -40,13 +40,43 @@ function renderTV(searchQuery){
         console.log('null images')
         var showImg = './assets/img/poster.png'
       }
-      showTitle = val.show.name
-      showURL = val.show.url
-      showStatus = val.show.status
-      showScheduleDays = val.show.schedule.days
-      showScheduleTime = val.show.schedule.time
-      showRuntime = val.show.runtime
-      showPremiere = val.show.premiered
+      if (val.show.name){
+        showTitle = val.show.name
+      } else {
+        console.log('null name')
+        showTitle = ''
+      }
+      if (val.show.url){
+        showURL = val.show.url
+      } else {
+        console.log('null url')
+        showURL = '#'
+      }
+      if (val.show.status){
+        showStatus = val.show.status
+      } else {
+        console.log('null status')
+      }
+      if (val.show.runtime){
+        showScheduleDays = val.show.schedule.days
+      } else {
+        console.log('null schedule days')
+      }
+      if (val.show.runtime){
+        showScheduleTime = val.show.schedule.time
+      } else {
+        console.log('null schedule time')
+      }
+      if (val.show.runtime){
+        showRuntime = val.show.runtime
+      } else {
+        console.log('null runtime')
+      }
+      if (val.show.premiered){
+        showPremiere = val.show.premiered
+      } else {
+        console.log('null premiere')
+      }
       if (val.rating){
         if (val.rating.average){
           showRatingAvg = val.rating.average
@@ -61,8 +91,16 @@ function renderTV(searchQuery){
       } else {
         console.log('null network name')
       }
-      showType = val.show.type
-      showGenres = val.show.showGenres
+      if (val.show.type){
+        showType = val.show.type
+      } else {
+        console.log('null type')
+      }
+      if (val.show.showGenres){
+        showType = val.show.showGenres
+      } else {
+        console.log('null genres')
+      }
       if (val.show.externals){
         if (val.show.externals.tvrage){
           showTvrage = val.show.externals.tvrage
@@ -75,18 +113,25 @@ function renderTV(searchQuery){
           showTvdb = val.show.externals.thetvdb
         }
       } else {
-        console.log('null tvRage')
+        console.log('null tvdb')
       }
       if (val.show.externals){
         if (val.show.externals.imdb){
           showImdb = val.show.externals.imdb
         }
       } else {
-        console.log('null tvRage')
+        console.log('null imdb')
       }
-      showUpdated = val.show.updated
-      showSummary = val.show.summary
-
+      if (val.show.updated){
+        showUpdated = val.show.updated
+      } else {
+        console.log('null updated')
+      }
+      if (val.show.summary){
+        showSummary = val.show.summary
+      } else {
+        console.log('null summary')
+      }
       $("#tvColumn").append('<article class="media"><figure class="media-left"><p class="image" style="height:258px;width:175px;"><img src="'+showImg+'" /></p></figure>')
       $("#tvColumn").append('<div class="media-content"><div class="content">')
       $("#tvColumn").append('<p><strong><a href="'+ showURL +'">'+ showTitle +'</a></strong></p>')
