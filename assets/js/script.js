@@ -136,7 +136,7 @@ function renderTV(searchQuery) {
         //console.log('null summary')
       }
       $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')
-      $('#result-'+val.show.id).append('<div class="column poster"><img src="'+showImg+'" /></div>')
+      $('#result-'+val.show.id).append('<div class="column poster has-background-danger"><img src="'+showImg+'" /></div>')
       $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4"><a href="'+ showURL +'">'+ showTitle +'</a></p>')
       $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
       if (showStatus){
@@ -158,20 +158,21 @@ function renderTV(searchQuery) {
         $("#column-right-"+val.show.id).append('<li>'+showType+'</li>')
       }
       $("#tvColumn").append('</div></div></div>')
-      omdb_imdb = $("<div>").addClass("omdbapi_imdb")
-      omdbURL = 'https://www.omdbapi.com/?t='+showTitle+'&apikey='+omdbAPI
-      $.getJSON(omdbURL, function(omdbreturn) {
-        if (omdbreturn.imdbRating){
-          omdb_imdb.html('<li>IMDB: '+omdbreturn.imdbRating+'</li>')
-          console.log(omdbreturn.imdbRating)
-        } else {
-          console.log('No imdb rating')
-        }
-        console.log(omdb_imdb)
-        $("#column-right-"+val.show.id).after(omdb_imdb)
-      })
     })
-    
+
+    shortTitle = showTitle.replace(/\s/g, '');
+    omdb_imdb = $("<div>").addClass("omdbapi_imdb")
+    omdbURL = 'https://www.omdbapi.com/?t='+showTitle+'&apikey='+omdbAPI
+    $.getJSON(omdbURL, function(omdbreturn) {
+      if (omdbreturn.imdbRating){
+        omdb_imdb.html('<p>IMDB: '+omdbreturn.imdbRating+'</p>')
+        console.log(omdbreturn.imdbRating)
+      } else {
+        console.log('No imdb rating')
+      }
+      console.log(omdb_imdb)
+      $(".media-show-"+shortTitle).after(omdb_imdb)
+    })
   })
 }
 $(document).ready(function () {
