@@ -46,15 +46,43 @@
 }
 .notification {
     padding:1.5rem 1.5rem 1.5rem 1.5rem;
+    background:#e8e8e840;
+}
+.footer {
+    background:#e8e8e840;
 }
 .tracking_title {
     margin-bottom:12px;
+}
+.is-hovered.input {
+    border-color:#dbdbdb;
+    border-right:none;
+    border-top-right-radius:0;
+    border-bottom-right-radius:0;
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+}
+#searchSubmit {
+    background:#e8e8e840;
+    border-top-right-radius:10px;
+    border-bottom-right-radius:10px;
+    border-bottom-left-radius: 0px;
+    border-top-left-radius: 0px;
 }
 .icon-github {
     height:14px;
     width:14px;
     margin-right:5px;
     background:no-repeat center url("../img/fontawesome-svg/github.svg");
+}
+.button .icon:first-child:last-child {
+    margin:0;
+}
+.icon.icon-tv {
+    height:16px;
+    width:30px;
+    padding-right:20px;
+    background:no-repeat right url("../img/fontawesome-svg/tv.svg");
 }
 .icon-save {
     height:16px;
