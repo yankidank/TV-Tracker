@@ -22,6 +22,7 @@ var index = 0
 var storeID
 var storeTitle
 var storePackage
+var storeFetch
 
 function renderSchedule(){
   storeFetch = localStorage.getItem('TVtracker')
