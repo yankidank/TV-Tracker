@@ -11,9 +11,6 @@ input-bar {
         height: 270px;
     }
     
-    .buttons {
-    align-items: right;
-    }
     
     .details {
         max-width: 650px;
