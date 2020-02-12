@@ -54,8 +54,7 @@
     height:14px;
     width:14px;
     margin-right:5px;
-    background-image: url("../img/fontawesome-svg/github.svg");
-    background:no-repeat;
+    background:no-repeat center url("../img/fontawesome-svg/github.svg");
 }
 .icon-save {
     height:16px;
