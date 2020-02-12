@@ -132,11 +132,14 @@ function renderTV(searchQuery){
       } else {
         console.log('null summary')
       }
+
+      // vreate   notification div   and append to this element and then append this div to the
       $("#tvColumn").append('<article class="media"><figure class="media-left"><p class="image" style="height:258px;width:175px;"><img src="'+showImg+'" /></p></figure>')
       $("#tvColumn").append('<div class="media-content"><div class="content">')
       $("#tvColumn").append('<p><strong><a href="'+ showURL +'">'+ showTitle +'</a></strong></p>')
+      $(".media").append('<div id="notification-result">')
       if (showStatus){
-        $("#tvColumn").append('<p>'+showStatus+'</p>')
+        $("#notification-result").append('<p>'+showStatus+'</p>')
       }
       if (showPremiere){
         $("#tvColumn").append('<p>'+showPremiere+'</p>')
