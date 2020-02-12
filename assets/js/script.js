@@ -19,15 +19,35 @@ var showUpdated
 var showSummary
 var omdbAPI = '473a48b9'
 var index = 0
+var storeID
+var storeTitle
+var storePackage
+
+function renderSchedule(){
+  storeFetch = localStorage.getItem('TVtracker')
+  storeFetch = JSON.parse(storeFetch)
+  if (!storeFetch){
+    storeFetch = []
+  }
+  var i;
+  for (i = 0; i < storeFetch.length; i++) {
+    $("#tracking_side").append('<div class="side_show_list" data-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span">'+storeFetch[i].title+'</span></div>')
+  }
+}
 
 function renderTV(searchQuery){
+  storeFetch = localStorage.getItem('TVtracker')
+  storeFetch = JSON.parse(storeFetch)
+  if (!storeFetch){
+    storeFetch = []
+  }
   var tvAPISearch = 'https://api.tvmaze.com/search/shows?q='+searchQuery
   $.getJSON(tvAPISearch, function(tv) {
     // Remove previous search results
     $("#tvColumn").empty()
     tv.forEach(function(val) {
       //console.log(index)
-      console.log(val)
+      //console.log(val)
       if (val.show.image){
         if (val.show.image.original){
           var showImg = val.show.image.original
@@ -138,6 +158,18 @@ function renderTV(searchQuery){
       $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')
       $('#result-'+val.show.id).append('<div class="column poster"><img src="'+showImg+'" /></div>')
       $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4"><a href="'+ showURL +'">'+ showTitle +'</a></p>')
+      // ToDO: Check save status. If already tracking change the icon and function
+      $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
+      $('#result-'+val.show.id+' .show-add').click(function(){
+        storeID = $('#result-'+val.show.id+' .show-add').data("id")
+        storeTitle = $('#result-'+val.show.id+' .show-add').data("title")       
+        $("#tracking_side").append('<div class="side_show_list" data-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span">'+storeTitle+'</span></div>')
+        storePackage = { id: storeID, title: storeTitle}
+        storeFetch.push(storePackage)
+        localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+        console.log(storeFetch) // localStorage Array w/ Objects
+        //console.log(storePackage) // New item as Object
+      })
       $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
       if (showStatus){
         $("#column-right-"+val.show.id).append('<li>'+showStatus+'</li>')
@@ -163,18 +195,18 @@ function renderTV(searchQuery){
       $.getJSON(omdbURL, function(omdbreturn) {
         if (omdbreturn.imdbRating){
           omdb_imdb.html('<li>IMDB: '+omdbreturn.imdbRating+'</li>')
-          console.log(omdbreturn.imdbRating)
+          //console.log(omdbreturn.imdbRating)
         } else {
-          console.log('No imdb rating')
+          //console.log('No imdb rating')
         }
-        console.log(omdb_imdb)
+        //console.log(omdb_imdb)
         $("#column-right-"+val.show.id).after(omdb_imdb)
       })
     })
-    
   })
 }
 $(document).ready(function(){
+  renderSchedule() // Display tracked show data
   // Detect enter key press
   $('#searchInput').keypress(function(event){
     var keycode = (event.keyCode ? event.keyCode : event.which);

@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>TV Tracker</title>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+		<link rel="stylesheet" href="./assets/css/fontawesome.min.css.css">
 		<link rel="stylesheet" href="./assets/css/style.css">
 	</head>
   	<body>
@@ -12,7 +13,7 @@
 			<div class="hero-body">
 				<div class="container">
 					<h1 class="title">
-						TV Tracker
+						<a href="index.html">TV Tracker</a>
 					</h1>
 				</div>
 			</div>
@@ -23,14 +24,13 @@
 					<div class="column is-two-thirds">
 						<div class="control">
 							<input class="input is-hovered column" id="searchInput" type="text" placeholder="Search TV Show">
-							<button class="button" id="searchSubmit">TV</button>
-							<button class="button" id="searchSubmit">Movie</button>
+							<button class="button" id="searchSubmit">Search TV</button>
 							<br /><br />
 						</div>
 						<div id="tvColumn"></div>
 					</div>
 					<div class="column is-one-third">
-						<h2 class="is-size-4"> Tracking </h2>
+						<h2 class="is-size-4 tracking_title"> Tracking </h2>
 						<div class="notification" id="tracking_side"></div>
 					</div>
 				</div>
@@ -39,7 +39,7 @@
 		<footer class="footer">
 			<div class="content has-text-centered">
 				<p>
-					<a href="https://github.com/yankidank/TV-Tracker">Github</a>
+					<i class="icon icon-github"></i><a href="https://github.com/yankidank/TV-Tracker">Github</a>
 				</p>
 			</div>
 		</footer>
