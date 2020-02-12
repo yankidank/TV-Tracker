@@ -17,13 +17,16 @@ var showTvdb
 var showImdb
 var showUpdated
 var showSummary
+var omdbAPI = '473a48b9'
+var index = 0
 
 function renderTV(searchQuery) {
   var tvAPISearch = 'https://api.tvmaze.com/search/shows?q=' + searchQuery
   $.getJSON(tvAPISearch, function (tv) {
     // Remove previous search results
     $("#tvColumn").empty()
-    tv.forEach(function (val) {
+    tv.forEach(function(val) {
+      //console.log(index)
       console.log(val)
       if (val.show.image) {
         if (val.show.image.original) {
@@ -37,132 +40,140 @@ function renderTV(searchQuery) {
           var showImg = './assets/img/poster.png'
         }
       } else {
-        console.log('null images')
+        //console.log('null images')
         var showImg = './assets/img/poster.png'
       }
       if (val.show.name) {
         showTitle = val.show.name
       } else {
-        console.log('null name')
+        //console.log('null name')
         showTitle = ''
       }
       if (val.show.url) {
         showURL = val.show.url
       } else {
-        console.log('null url')
+        //console.log('null url')
         showURL = '#'
       }
       if (val.show.status) {
         showStatus = val.show.status
       } else {
-        console.log('null status')
+        //console.log('null status')
       }
       if (val.show.runtime) {
         showScheduleDays = val.show.schedule.days
       } else {
-        console.log('null schedule days')
+        //console.log('null schedule days')
       }
       if (val.show.runtime) {
         showScheduleTime = val.show.schedule.time
       } else {
-        console.log('null schedule time')
+        //console.log('null schedule time')
       }
       if (val.show.runtime) {
         showRuntime = val.show.runtime
       } else {
-        console.log('null runtime')
+        //console.log('null runtime')
       }
       if (val.show.premiered) {
         showPremiere = val.show.premiered
       } else {
-        console.log('null premiere')
+        //console.log('null premiere')
       }
       if (val.rating) {
         if (val.rating.average) {
           showRatingAvg = val.rating.average
         }
       } else {
-        console.log('null rating')
+        //console.log('null rating')
       }
       if (val.show.network) {
         if (val.show.network.name) {
           showNetwork = val.show.network.name
         }
       } else {
-        console.log('null network name')
+        //console.log('null network name')
       }
       if (val.show.type) {
         showType = val.show.type
       } else {
-        console.log('null type')
+        //console.log('null type')
       }
       if (val.show.showGenres) {
         showType = val.show.showGenres
       } else {
-        console.log('null genres')
+        //console.log('null genres')
       }
       if (val.show.externals) {
         if (val.show.externals.tvrage) {
           showTvrage = val.show.externals.tvrage
         }
       } else {
-        console.log('null tvRage')
+        //console.log('null tvRage')
       }
       if (val.show.externals) {
         if (val.show.externals.thetvdb) {
           showTvdb = val.show.externals.thetvdb
         }
       } else {
-        console.log('null tvdb')
+        //console.log('null tvdb')
       }
       if (val.show.externals) {
         if (val.show.externals.imdb) {
           showImdb = val.show.externals.imdb
         }
       } else {
-        console.log('null imdb')
+        //console.log('null imdb')
       }
       if (val.show.updated) {
         showUpdated = val.show.updated
       } else {
-        console.log('null updated')
+        //console.log('null updated')
       }
       if (val.show.summary) {
         showSummary = val.show.summary
       } else {
-        console.log('null summary')
+        //console.log('null summary')
       }
-
-
-
-
-      var html = `<div class="notification tv-result"><div class = "column poster"> <figure class="media-left"><p class="image" style="height:258px;width:175px;"><img src="' + showImg + '" /></p></figure><div class="column details">
-      `
-
-      $("#tvColumn").append(html)
-      $("#tvColumn").append('<div class="column details">')
-      $("#tvColumn").append('<p class="is-size-4"><strong> <a href="' + showURL + '">' + showTitle + '</a></strong> </p><div id="show details" class="column">')
-      if (showStatus) {
-        $("#tvColumn").append('<p>' + showStatus + '</p>')
+      $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')
+      $('#result-'+val.show.id).append('<div class="column poster has-background-danger"><img src="'+showImg+'" /></div>')
+      $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4"><a href="'+ showURL +'">'+ showTitle +'</a></p>')
+      $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
+      if (showStatus){
+        $("#column-right-"+val.show.id).append('<li>'+showStatus+'</li>')
       }
-      if (showPremiere) {
-        $("#tvColumn").append('<p>' + showPremiere + '</p>')
+      if (showPremiere){
+        $("#column-right-"+val.show.id).append('<li>'+showPremiere+'</li>')
       }
-      if (showRatingAvg) {
-        $("#tvColumn").append('<p>' + showRatingAvg + '</p>')
+      if (showRatingAvg){
+        $("#column-right-"+val.show.id).append('<li>'+showRatingAvg+'</li>')
       }
-      if (showScheduleTime) {
-        $("#tvColumn").append('<p>' + showScheduleTime + '</p>')
+      if (showScheduleTime){
+        $("#column-right-"+val.show.id).append('<li>'+showScheduleTime+'</li>')
       }
-      if (showNetwork) {
-        $("#tvColumn").append('<p>' + showNetwork + '</p>')
+      if (showNetwork){
+        $("#column-right-"+val.show.id).append('<li>'+showNetwork+'</li>')
       }
-      if (showType) {
-        $("#tvColumn").append('<p>' + showType + '</p>')
+      if (showType){
+        $("#column-right-"+val.show.id).append('<li>'+showType+'</li>')
       }
       $("#tvColumn").append('</div></div></div>')
-
     })
+/* 
+    shortTitle = showTitle.replace(/\s/g, '');
+    omdb_imdb = $("<div>").addClass("omdbapi_imdb")
+    omdbURL = 'https://www.omdbapi.com/?t='+showTitle+'&apikey='+omdbAPI
+    $.getJSON(omdbURL, function(omdbreturn) {
+      if (omdbreturn.imdbRating){
+        omdb_imdb.html('<p>IMDB: '+omdbreturn.imdbRating+'</p>')
+        console.log(omdbreturn.imdbRating)
+      } else {
+        console.log('No imdb rating')
+      }
+      console.log(omdb_imdb)
+      $(".media-show-"+shortTitle).after(omdb_imdb)
+    })
+     */
   })
 }
 $(document).ready(function () {
@@ -180,4 +191,3 @@ $(document).ready(function () {
     renderTV(searchQuery)
   })
 })
-
