@@ -24,18 +24,34 @@ var storeTitle
 var storePackage
 var storeFetch
 
+function add(array, transferID, transferTitle) {
+  const { length } = array;
+  const found = array.some(el => el.title === transferTitle);
+  if (!found) array.push({ id: transferID, title: transferTitle });
+  return array;
+}
 function renderSchedule(){
   storeFetch = localStorage.getItem('TVtracker')
   storeFetch = JSON.parse(storeFetch)
   if (!storeFetch){
     storeFetch = []
   }
+  console.log(storeFetch)
   var i;
   for (i = 0; i < storeFetch.length; i++) {
-    $("#tracking_side").append('<div class="side_show_list" data-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span">'+storeFetch[i].title+'</span></div>')
+    $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span">'+storeFetch[i].title+'</span></div>')
   }
+   var found = {};
+        $('[data-side-id]').each(function(){
+          var $this = $(this);
+          if(found[$this.data('side-id')]){
+            $this.remove();   
+          }
+          else{
+            found[$this.data('side-id')] = true;   
+          }
+        })
 }
-
 function renderTV(searchQuery){
   storeFetch = localStorage.getItem('TVtracker')
   storeFetch = JSON.parse(storeFetch)
@@ -163,13 +179,24 @@ function renderTV(searchQuery){
       $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
       $('#result-'+val.show.id+' .show-add').click(function(){
         storeID = $('#result-'+val.show.id+' .show-add').data("id")
-        storeTitle = $('#result-'+val.show.id+' .show-add').data("title")       
-        $("#tracking_side").append('<div class="side_show_list" data-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span">'+storeTitle+'</span></div>')
-        storePackage = { id: storeID, title: storeTitle}
-        storeFetch.push(storePackage)
+        storeTitle = $('#result-'+val.show.id+' .show-add').data("title")
+        $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span">'+storeTitle+'</span></div>')
+        $('[data-side-id="side_'+val.show.id+'"]').addClass('new_track')
+        // Check if the sidebar item already exists
+        var found = {}
+        $('[data-side-id]').each(function(){
+          var $this = $(this)
+          if(found[$this.data('side-id')]){
+            $this.remove()
+          }
+          else{
+            found[$this.data('side-id')] = true;   
+          }
+        })
+        storeFetch = add(storeFetch, storeID, storeTitle) // Function to prevent duplicate entries
         localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
         console.log(storeFetch) // localStorage Array w/ Objects
-        //console.log(storePackage) // New item as Object
+        
       })
       $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
       if (showStatus){
