@@ -27,7 +27,7 @@ function renderTV(searchQuery){
     $("#tvColumn").empty()
     tv.forEach(function(val) {
       //console.log(index)
-      //console.log(val)
+      console.log(val)
       if (val.show.image){
         if (val.show.image.original){
           var showImg = val.show.image.original
@@ -135,28 +135,27 @@ function renderTV(searchQuery){
       } else {
         //console.log('null summary')
       }
-      shortTitle = showTitle.replace(/\W/g, '')
-      $("#tvColumn").append('<div class="notification tv-result" id="result-'+shortTitle+'">')
-      $('#result-'+shortTitle).append('<div class="column poster has-background-danger"><img src="'+showImg+'" /></div>')
-      $('#result-'+shortTitle).append('<div class="column details" id="column-'+shortTitle+'"><p class="is-size-4"><a href="'+ showURL +'">'+ showTitle +'</a></p>')
-      $('#column-'+shortTitle).append('<div class="column" id="column-right-'+shortTitle+'">')
+      $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')
+      $('#result-'+val.show.id).append('<div class="column poster has-background-danger"><img src="'+showImg+'" /></div>')
+      $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4"><a href="'+ showURL +'">'+ showTitle +'</a></p>')
+      $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
       if (showStatus){
-        $("#column-right-"+shortTitle).append('<li>'+showStatus+'</li>')
+        $("#column-right-"+val.show.id).append('<li>'+showStatus+'</li>')
       }
       if (showPremiere){
-        $("#column-right-"+shortTitle).append('<li>'+showPremiere+'</li>')
+        $("#column-right-"+val.show.id).append('<li>'+showPremiere+'</li>')
       }
       if (showRatingAvg){
-        $("#column-right-"+shortTitle).append('<li>'+showRatingAvg+'</li>')
+        $("#column-right-"+val.show.id).append('<li>'+showRatingAvg+'</li>')
       }
       if (showScheduleTime){
-        $("#column-right-"+shortTitle).append('<li>'+showScheduleTime+'</li>')
+        $("#column-right-"+val.show.id).append('<li>'+showScheduleTime+'</li>')
       }
       if (showNetwork){
-        $("#column-right-"+shortTitle).append('<li>'+showNetwork+'</li>')
+        $("#column-right-"+val.show.id).append('<li>'+showNetwork+'</li>')
       }
       if (showType){
-        $("#column-right-"+shortTitle).append('<li>'+showType+'</li>')
+        $("#column-right-"+val.show.id).append('<li>'+showType+'</li>')
       }
       $("#tvColumn").append('</div></div></div>')
     })
@@ -192,4 +191,3 @@ $(document).ready(function(){
     renderTV(searchQuery)
   })
 })
-
