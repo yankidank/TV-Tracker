@@ -23,20 +23,43 @@ var storeID
 var storeTitle
 var storePackage
 var storeFetch
+var hash
 
+function add(array, transferID, transferTitle) {
+  const { length } = array;
+  const found = array.some(el => el.title === transferTitle);
+  if (!found) array.push({ id: transferID, title: transferTitle });
+  return array;
+}
 function renderSchedule(){
   storeFetch = localStorage.getItem('TVtracker')
   storeFetch = JSON.parse(storeFetch)
   if (!storeFetch){
     storeFetch = []
   }
+  console.log(storeFetch)
   var i;
   for (i = 0; i < storeFetch.length; i++) {
-    $("#tracking_side").append('<div class="side_show_list" data-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span">'+storeFetch[i].title+'</span></div>')
+    $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].title+'">'+storeFetch[i].title+'</a></span></div>')
   }
-}
+  var found = {};
+  $('[data-side-id]').each(function(){
+    var $this = $(this);
+    if(found[$this.data('side-id')]){
+      $this.remove();   
+    }
+    else{
+      found[$this.data('side-id')] = true;   
+    }
+  }) 
 
-  
+}
+function renderTV(searchQuery){
+  storeFetch = localStorage.getItem('TVtracker')
+  storeFetch = JSON.parse(storeFetch)
+  if (!storeFetch){
+    storeFetch = []
+  }
   var tvAPISearch = 'https://api.tvmaze.com/search/shows?q='+searchQuery
   $.getJSON(tvAPISearch, function(tv) {
     // Remove previous search results
@@ -151,33 +174,44 @@ function renderSchedule(){
       } else {
         //console.log('null summary')
       }
+      if (showPremiere){
+        var showYear = showPremiere.slice(0, -6);
+      }
       $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')
-      $('#result-'+val.show.id).append('<div class="column poster has-background-danger"><img src="'+showImg+'" /></div>')
-      $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4"><a href="'+ showURL +'">'+ showTitle +'</a></p>')
+      $('#result-'+val.show.id).append('<div class="column poster"><img src="'+showImg+'" /></div>')
+      $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
       // ToDO: Check save status. If already tracking change the icon and function
       $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
       $('#result-'+val.show.id+' .show-add').click(function(){
         storeID = $('#result-'+val.show.id+' .show-add').data("id")
-        storeTitle = $('#result-'+val.show.id+' .show-add').data("title")       
-        $("#tracking_side").append('<div class="side_show_list" data-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span">'+storeTitle+'</span></div>')
-        storePackage = { id: storeID, title: storeTitle}
-        storeFetch.push(storePackage)
+        storeTitle = $('#result-'+val.show.id+' .show-add').data("title")
+        $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeTitle+'">'+storeTitle+'</a></span></div>')
+        $('[data-side-id="side_'+val.show.id+'"]').addClass('new_track')
+        // Check if the sidebar item already exists
+        var found = {}
+        $('[data-side-id]').each(function(){
+          var $this = $(this)
+          if(found[$this.data('side-id')]){
+            $this.remove()
+          }
+          else{
+            found[$this.data('side-id')] = true;   
+          }
+        })
+        storeFetch = add(storeFetch, storeID, storeTitle) // Function to prevent duplicate entries
         localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
         console.log(storeFetch) // localStorage Array w/ Objects
-        //console.log(storePackage) // New item as Object
+        
       })
       $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
       if (showStatus){
         $("#column-right-"+val.show.id).append('<li>'+showStatus+'</li>')
       }
-      if (showPremiere){
-        $("#column-right-"+val.show.id).append('<li>'+showPremiere+'</li>')
-      }
       if (showRatingAvg){
         $("#column-right-"+val.show.id).append('<li>'+showRatingAvg+'</li>')
       }
       if (showScheduleTime){
-        $("#column-right-"+val.show.id).append('<li>'+showScheduleTime+'</li>')
+        $("#column-right-"+val.show.id).append('<li>'+timeConvert(showScheduleTime)+'</li>')
       }
       if (showNetwork){
         $("#column-right-"+val.show.id).append('<li>'+showNetwork+'</li>')
@@ -186,37 +220,65 @@ function renderSchedule(){
         $("#column-right-"+val.show.id).append('<li>'+showType+'</li>')
       }
       $("#tvColumn").append('</div></div></div>')
-      
-      // shortTitle = showTitle.replace(/\s/g, '');      
-      var tvmazeIMDB = val.show.externals.imdb
-      console.log(tvmazeIMDB)
-      omdbURL = 'https://www.omdbapi.com/?i='+tvmazeIMDB+'&apikey='+omdbAPI
+
+      //omdb search for IMDB rating
+      var IMDBID = val.show.externals.imdb
+      omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
       $.getJSON(omdbURL, function(omdbreturn) {
         if (omdbreturn.imdbRating){
           $("#column-right-"+val.show.id).append('<li>IMDB: '+omdbreturn.imdbRating+'</li>')
-          console.log(omdbreturn.imdbRating)
         } else {
           console.log('No imdb rating')
         }
-        // console.log(omdb_imdb)
-        // $(".media-show-"+shortTitle).after(omdb_imdb)
       })
     })
   })
-  
+}
+function timeConvert(APItime){
+  var string = APItime.slice(0, -3);
+  if (string < 12){
+    AMPM = ' AM'
+  } else {
+    AMPM = ' PM'
+  }
+  if (string > 12){
+    itemTwelve = string - 12
+  } else {
+    itemTwelve = string
+  }
+  if (itemTwelve == 0){
+    itemTwelve = 12
+  }
+  return itemTwelve + AMPM
+}
 
-//   $(document).ready(function () {
-//   // Detect enter key press
-//   $('#searchInput').keypress(function (event) {
-//     var keycode = (event.keyCode ? event.keyCode : event.which);
-//     if (keycode == '13') {
-//       searchQuery = $("#searchInput").val()
-//       renderTV(searchQuery)
-//     }
-//   })
-//   // Detect click on submit button
-//   $("#searchSubmit").click(function () {
-//     searchQuery = $("#searchInput").val()
-//     renderTV(searchQuery)
-//   })
-// })
+$(document).ready(function(){
+  renderSchedule() // Display tracked show data
+  // Detect enter key press
+  $('#searchInput').keypress(function(event){
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if(keycode == '13'){
+      searchQuery = $("#searchInput").val()
+      renderTV(searchQuery)	
+    }
+  })
+  // Detect click on submit button
+  $("#searchSubmit").click(function(){
+    searchQuery = $("#searchInput").val()
+    renderTV(searchQuery)
+  })
+  var oldhash = ''
+  var newhash = ''
+  $( "body" ).click(function() {
+    setTimeout(function(){
+      if(window.location.hash) {
+        newhash = window.location.hash.substring(1)
+        if (oldhash !== newhash){
+          renderTV(newhash)
+          $("html, body").animate({ scrollTop: 165 }, "slow")
+        }
+        oldhash = newhash
+      }
+    }, 25)
+  })
+})
