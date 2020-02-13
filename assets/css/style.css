@@ -33,8 +33,8 @@
 .show-add {
     font-size:2.8rem;
     position:absolute;
-    top:0;
-    right:20px;
+    top: -8px;
+    right: 14px;
 }
 .show-add:hover {
     cursor:pointer;
@@ -103,4 +103,17 @@
 .tv-result .icon-remove {
     height:26px;
     width:26px;
+}
+.new_track {
+    background: rgba(81, 171, 84, 0.95);
+    color: #fff;
+}
+.show_title a {
+    text-decoration:none;
+}
+.notification a:not(.button):not(.dropdown-item){
+    text-decoration:none;
+}
+.notification a:not(.button):not(.dropdown-item):hover{
+    text-decoration:underline;
 }
