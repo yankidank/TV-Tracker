@@ -187,17 +187,16 @@ function renderSchedule(){
       }
       $("#tvColumn").append('</div></div></div>')
       
+      // shortTitle = showTitle.replace(/\s/g, '');      
       var tvmazeIMDB = val.show.externals.imdb
       console.log(tvmazeIMDB)
-      // shortTitle = showTitle.replace(/\s/g, '');
-      // omdb_imdb = $("#column-right-"+val.show.id").addClass("omdbapi_imdb")
       omdbURL = 'https://www.omdbapi.com/?i='+tvmazeIMDB+'&apikey='+omdbAPI
       $.getJSON(omdbURL, function(omdbreturn) {
         if (omdbreturn.imdbRating){
           $("#column-right-"+val.show.id).append('<li>IMDB: '+omdbreturn.imdbRating+'</li>')
           console.log(omdbreturn.imdbRating)
         } else {
-          //console.log('No imdb rating')
+          console.log('No imdb rating')
         }
         // console.log(omdb_imdb)
         // $(".media-show-"+shortTitle).after(omdb_imdb)
@@ -206,18 +205,18 @@ function renderSchedule(){
   })
   
 
-  $(document).ready(function () {
-  // Detect enter key press
-  $('#searchInput').keypress(function (event) {
-    var keycode = (event.keyCode ? event.keyCode : event.which);
-    if (keycode == '13') {
-      searchQuery = $("#searchInput").val()
-      renderTV(searchQuery)
-    }
-  })
-  // Detect click on submit button
-  $("#searchSubmit").click(function () {
-    searchQuery = $("#searchInput").val()
-    renderTV(searchQuery)
-  })
-})
+//   $(document).ready(function () {
+//   // Detect enter key press
+//   $('#searchInput').keypress(function (event) {
+//     var keycode = (event.keyCode ? event.keyCode : event.which);
+//     if (keycode == '13') {
+//       searchQuery = $("#searchInput").val()
+//       renderTV(searchQuery)
+//     }
+//   })
+//   // Detect click on submit button
+//   $("#searchSubmit").click(function () {
+//     searchQuery = $("#searchInput").val()
+//     renderTV(searchQuery)
+//   })
+// })
