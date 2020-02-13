@@ -276,9 +276,9 @@ $(document).ready(function(){
         newhash = window.location.hash.substring(1)
         if (oldhash !== newhash){
           renderTV(newhash)
+          $("html, body").animate({ scrollTop: 165 }, "slow")
         }
         oldhash = newhash
-        $("html, body").animate({ scrollTop: 165 }, "slow")
       }
     }, 25)
   })
