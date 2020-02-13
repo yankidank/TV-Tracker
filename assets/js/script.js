@@ -22,12 +22,15 @@ var index = 0
 var storeID
 var storeTitle
 var storePackage
-var storeFetch
 var hash
 var fanartAPI = 'b6854576836477401d01b1807776a52c'
 var fanartAPISearch
 var bgImage
-
+var storeFetch = localStorage.getItem('TVtracker')
+storeFetch = JSON.parse(storeFetch)
+if (!storeFetch){
+  storeFetch = []
+}
 function add(array, transferID, transferTitle) {
   const { length } = array;
   const found = array.some(el => el.title === transferTitle);
@@ -35,15 +38,9 @@ function add(array, transferID, transferTitle) {
   return array;
 }
 function renderSchedule(){
-  storeFetch = localStorage.getItem('TVtracker')
-  storeFetch = JSON.parse(storeFetch)
-  if (!storeFetch){
-    storeFetch = []
-  }
-  //console.log(storeFetch)
   var i;
   for (i = 0; i < storeFetch.length; i++) {
-    $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].title+'">'+storeFetch[i].title+'</a></span></div>')
+    $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+storeFetch[i].id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].title+'">'+storeFetch[i].title+'</a></span></div>')
   }
   var found = {};
   $('[data-side-id]').each(function(){
@@ -58,11 +55,6 @@ function renderSchedule(){
 
 }
 function renderTV(searchQuery){
-  storeFetch = localStorage.getItem('TVtracker')
-  storeFetch = JSON.parse(storeFetch)
-  if (!storeFetch){
-    storeFetch = []
-  }
   var tvAPISearch = 'https://api.tvmaze.com/search/shows?q='+searchQuery
   $.getJSON(tvAPISearch, function(tv) {
     // Remove previous search results
@@ -180,12 +172,17 @@ function renderTV(searchQuery){
       if (showPremiere){
         var showYear = showPremiere.slice(0, -6);
       }
-      $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')      
+      $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')
+      $("#result-"+val.show.id).hide()
+      $("#result-"+val.show.id).fadeIn(600, 'swing')
       $('#result-'+val.show.id).append('<div class="column poster"><img src="'+showImg+'" /></div>')
       $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
-      // ToDO: Check save status. If already tracking change the icon and function
-      $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
-      $('#result-'+val.show.id+' .show-add').click(function(){
+      if (storeFetch.find(obj => obj.id == val.show.id)){
+        $('#result-'+val.show.id).append('<div class="show-remove" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
+      } else {
+        $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
+      }
+      $('#result-'+val.show.id+' div span').click(function(){
         storeID = $('#result-'+val.show.id+' .show-add').data("id")
         storeTitle = $('#result-'+val.show.id+' .show-add').data("title")
         $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeTitle+'">'+storeTitle+'</a></span></div>')
@@ -218,11 +215,7 @@ function renderTV(searchQuery){
       if (showNetwork){
         $("#column-right-"+val.show.id).append('<li>'+showNetwork+'</li>')
       }
-      if (showType){
-        $("#column-right-"+val.show.id).append('<li>'+showType+'</li>')
-      }
       $("#tvColumn").append('</div></div></div>')
-
       //omdb search for IMDB rating
       var IMDBID = val.show.externals.imdb
       omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
@@ -230,29 +223,32 @@ function renderTV(searchQuery){
         if (omdbreturn.imdbRating){
           $("#column-right-"+val.show.id).append('<li>IMDB: '+omdbreturn.imdbRating+'</li>')
         } else {
-          console.log('No imdb rating')
+          //console.log('No imdb rating')
         }
-        //console.log(omdb_imdb)
-        $("#column-right-"+val.show.id).after(omdb_imdb)
       })
       fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
-      $.getJSON(fanartAPISearch, function(fanart) {
-        // Remove previous search results
-        console.log(fanart)
-        if (fanart.tvposter[0].url){
-          bgImage = fanart.tvposter[0].url        
-        } else if (fanart.hdclearart[0].url){
-          bgImage = fanart.hdclearart[0].url
-        } else if (fanart.hdtvlogo[0].url){
-          bgImage = fanart.hdtvlogo[0].url
-        } else if (fanart.tvposter[0].url){
-          bgImage = fanart.tvposter[0].url
-        } else if (fanart.showbackground[0].url){
-          bgImage = fanart.showbackground[0].url
+      $.ajax({
+        type: 'GET',
+        url: fanartAPISearch,
+        success: function(fanart) {
+          //console.log(fanart)
+          if (fanart.hdclearart && fanart.hdclearart[0].url){
+            bgImage = fanart.hdclearart[0].url
+          } else if (fanart.showbackground && fanart.showbackground[0].url){
+            bgImage = fanart.showbackground[0].url
+          } else if (fanart.tvposter && fanart.tvposter[0].url){
+            bgImage = fanart.tvposter[0].url
+          } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
+            bgImage = fanart.hdtvlogo[0].url
+          }
+          //console.log(bgImage)
+          //console.log(val.show.id)
+            $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
+        },
+        error: function(e) {
+          //console.log(e.responseJSON.status)
+          //console.log(e.responseJSON['error message'])
         }
-        console.log(bgImage)
-        console.log(val.show.id)
-        $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
       })
     })
   })
