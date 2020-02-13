@@ -235,7 +235,7 @@ function renderTV(searchQuery){
         //console.log(omdb_imdb)
         $("#column-right-"+val.show.id).after(omdb_imdb)
       })
-      fanartAPISearch = 'http://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
+      fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
       $.getJSON(fanartAPISearch, function(fanart) {
         // Remove previous search results
         console.log(fanart)
