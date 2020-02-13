@@ -23,6 +23,7 @@ var storeID
 var storeTitle
 var storePackage
 var storeFetch
+var hash
 
 function add(array, transferID, transferTitle) {
   const { length } = array;
@@ -39,18 +40,19 @@ function renderSchedule(){
   console.log(storeFetch)
   var i;
   for (i = 0; i < storeFetch.length; i++) {
-    $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span">'+storeFetch[i].title+'</span></div>')
+    $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].title+'">'+storeFetch[i].title+'</a></span></div>')
   }
-   var found = {};
-        $('[data-side-id]').each(function(){
-          var $this = $(this);
-          if(found[$this.data('side-id')]){
-            $this.remove();   
-          }
-          else{
-            found[$this.data('side-id')] = true;   
-          }
-        })
+  var found = {};
+  $('[data-side-id]').each(function(){
+    var $this = $(this);
+    if(found[$this.data('side-id')]){
+      $this.remove();   
+    }
+    else{
+      found[$this.data('side-id')] = true;   
+    }
+  }) 
+
 }
 function renderTV(searchQuery){
   storeFetch = localStorage.getItem('TVtracker')
@@ -172,15 +174,18 @@ function renderTV(searchQuery){
       } else {
         //console.log('null summary')
       }
+      if (showPremiere){
+        var showYear = showPremiere.slice(0, -6);
+      }
       $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')
       $('#result-'+val.show.id).append('<div class="column poster"><img src="'+showImg+'" /></div>')
-      $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4"><a href="'+ showURL +'">'+ showTitle +'</a></p>')
+      $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
       // ToDO: Check save status. If already tracking change the icon and function
       $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
       $('#result-'+val.show.id+' .show-add').click(function(){
         storeID = $('#result-'+val.show.id+' .show-add').data("id")
         storeTitle = $('#result-'+val.show.id+' .show-add').data("title")
-        $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span">'+storeTitle+'</span></div>')
+        $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeTitle+'">'+storeTitle+'</a></span></div>')
         $('[data-side-id="side_'+val.show.id+'"]').addClass('new_track')
         // Check if the sidebar item already exists
         var found = {}
@@ -202,14 +207,11 @@ function renderTV(searchQuery){
       if (showStatus){
         $("#column-right-"+val.show.id).append('<li>'+showStatus+'</li>')
       }
-      if (showPremiere){
-        $("#column-right-"+val.show.id).append('<li>'+showPremiere+'</li>')
-      }
       if (showRatingAvg){
         $("#column-right-"+val.show.id).append('<li>'+showRatingAvg+'</li>')
       }
       if (showScheduleTime){
-        $("#column-right-"+val.show.id).append('<li>'+showScheduleTime+'</li>')
+        $("#column-right-"+val.show.id).append('<li>'+timeConvert(showScheduleTime)+'</li>')
       }
       if (showNetwork){
         $("#column-right-"+val.show.id).append('<li>'+showNetwork+'</li>')
@@ -233,6 +235,24 @@ function renderTV(searchQuery){
     })
   })
 }
+function timeConvert(APItime){
+  var string = APItime.slice(0, -3);
+  if (string < 12){
+    AMPM = ' AM'
+  } else {
+    AMPM = ' PM'
+  }
+  if (string > 12){
+    itemTwelve = string - 12
+  } else {
+    itemTwelve = string
+  }
+  if (itemTwelve == 0){
+    itemTwelve = 12
+  }
+  return itemTwelve + AMPM
+}
+
 $(document).ready(function(){
   renderSchedule() // Display tracked show data
   // Detect enter key press
@@ -247,5 +267,13 @@ $(document).ready(function(){
   $("#searchSubmit").click(function(){
     searchQuery = $("#searchInput").val()
     renderTV(searchQuery)
+  })
+  $( "body" ).click(function() {
+    setTimeout(function(){
+      if(window.location.hash) {
+        var hash = window.location.hash.substring(1)
+        renderTV(hash)
+      }
+    }, 75)
   })
 })
