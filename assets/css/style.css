@@ -44,10 +44,6 @@
     padding:6px 0px 6px 11px;
     box-shadow:2px 2px 4px #bebebe;
 }
-.sidebar_show_span:hover {
-    text-decoration:underline;
-    cursor:pointer;
-}
 .notification {
     padding:1.5rem 1.5rem 1.5rem 1.5rem;
     background:#e8e8e840;

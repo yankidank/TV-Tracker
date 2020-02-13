@@ -268,12 +268,17 @@ $(document).ready(function(){
     searchQuery = $("#searchInput").val()
     renderTV(searchQuery)
   })
+  var oldhash = ''
+  var newhash = ''
   $( "body" ).click(function() {
     setTimeout(function(){
       if(window.location.hash) {
-        var hash = window.location.hash.substring(1)
-        renderTV(hash)
-        $("html, body").animate({ scrollTop: 0 }, "slow")
+        newhash = window.location.hash.substring(1)
+        if (oldhash !== newhash){
+          renderTV(newhash)
+        }
+        oldhash = newhash
+        $("html, body").animate({ scrollTop: 165 }, "slow")
       }
     }, 25)
   })
