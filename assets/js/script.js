@@ -24,6 +24,9 @@ var storeTitle
 var storePackage
 var storeFetch
 var hash
+var fanartAPI = 'b6854576836477401d01b1807776a52c'
+var fanartAPISearch
+var bgImage
 
 function add(array, transferID, transferTitle) {
   const { length } = array;
@@ -37,7 +40,7 @@ function renderSchedule(){
   if (!storeFetch){
     storeFetch = []
   }
-  console.log(storeFetch)
+  //console.log(storeFetch)
   var i;
   for (i = 0; i < storeFetch.length; i++) {
     $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].title+'">'+storeFetch[i].title+'</a></span></div>')
@@ -177,7 +180,7 @@ function renderTV(searchQuery){
       if (showPremiere){
         var showYear = showPremiere.slice(0, -6);
       }
-      $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')
+      $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')      
       $('#result-'+val.show.id).append('<div class="column poster"><img src="'+showImg+'" /></div>')
       $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
       // ToDO: Check save status. If already tracking change the icon and function
@@ -200,8 +203,7 @@ function renderTV(searchQuery){
         })
         storeFetch = add(storeFetch, storeID, storeTitle) // Function to prevent duplicate entries
         localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
-        console.log(storeFetch) // localStorage Array w/ Objects
-        
+        //console.log(storeFetch) // localStorage Array w/ Objects
       })
       $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
       if (showStatus){
@@ -230,9 +232,33 @@ function renderTV(searchQuery){
         } else {
           console.log('No imdb rating')
         }
+        //console.log(omdb_imdb)
+        $("#column-right-"+val.show.id).after(omdb_imdb)
+      })
+      fanartAPISearch = 'http://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
+      $.getJSON(fanartAPISearch, function(fanart) {
+        // Remove previous search results
+        console.log(fanart)
+        if (fanart.tvposter[0].url){
+          bgImage = fanart.tvposter[0].url        
+        } else if (fanart.hdclearart[0].url){
+          bgImage = fanart.hdclearart[0].url
+        } else if (fanart.hdtvlogo[0].url){
+          bgImage = fanart.hdtvlogo[0].url
+        } else if (fanart.tvposter[0].url){
+          bgImage = fanart.tvposter[0].url
+        } else if (fanart.showbackground[0].url){
+          bgImage = fanart.showbackground[0].url
+        }
+        console.log(bgImage)
+        console.log(val.show.id)
+        $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
       })
     })
   })
+}
+function removeHash () { 
+  history.pushState("", document.title, window.location.pathname + window.location.search);
 }
 function timeConvert(APItime){
   var string = APItime.slice(0, -3);
@@ -253,6 +279,7 @@ function timeConvert(APItime){
 }
 
 $(document).ready(function(){
+  removeHash()
   renderSchedule() // Display tracked show data
   // Detect enter key press
   $('#searchInput').keypress(function(event){
