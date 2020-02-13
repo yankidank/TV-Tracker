@@ -43,19 +43,8 @@ function renderSchedule(){
   //console.log(storeFetch)
   var i;
   for (i = 0; i < storeFetch.length; i++) {
-    $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].title+'">'+storeFetch[i].title+'</a></span></div>')
+    $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+storeFetch[i].id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].title+'">'+storeFetch[i].title+'</a></span></div>')
   }
-  var found = {};
-  $('[data-side-id]').each(function(){
-    var $this = $(this);
-    if(found[$this.data('side-id')]){
-      $this.remove();   
-    }
-    else{
-      found[$this.data('side-id')] = true;   
-    }
-  }) 
-
 }
 function renderTV(searchQuery){
   storeFetch = localStorage.getItem('TVtracker')
@@ -231,14 +220,11 @@ function renderTV(searchQuery){
           $("#column-right-"+val.show.id).append('<li>IMDB: '+omdbreturn.imdbRating+'</li>')
         } else {
           console.log('No imdb rating')
-        }
-        //console.log(omdb_imdb)
-        $("#column-right-"+val.show.id).after(omdb_imdb)
+        }       
       })
       fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
       $.getJSON(fanartAPISearch, function(fanart) {
-        // Remove previous search results
-        console.log(fanart)
+        //console.log(fanart)
         if (fanart.tvposter[0].url){
           bgImage = fanart.tvposter[0].url        
         } else if (fanart.hdclearart[0].url){
@@ -250,8 +236,8 @@ function renderTV(searchQuery){
         } else if (fanart.showbackground[0].url){
           bgImage = fanart.showbackground[0].url
         }
-        console.log(bgImage)
-        console.log(val.show.id)
+        //console.log(bgImage)
+        //console.log(val.show.id)
         $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
       })
     })
