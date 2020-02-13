@@ -117,10 +117,16 @@
 .tv-result img.tv-background {
     position: absolute;
     left: 0;
-    top: -100px;
-    width: 100%;
+    top: -80px;
+    width: auto;
     height: auto;
     opacity: 0.1;
+    min-height:305px;
+}
+@media screen and (max-width: 1215px) {
+    .tv-result img.tv-background {
+        top: 0px;
+    }
 }
 .new_track {
     background: rgba(81, 171, 84, 0.95);

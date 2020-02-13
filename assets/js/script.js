@@ -22,12 +22,15 @@ var index = 0
 var storeID
 var storeTitle
 var storePackage
-var storeFetch
 var hash
 var fanartAPI = 'b6854576836477401d01b1807776a52c'
 var fanartAPISearch
 var bgImage
-
+var storeFetch = localStorage.getItem('TVtracker')
+storeFetch = JSON.parse(storeFetch)
+if (!storeFetch){
+  storeFetch = []
+}
 function add(array, transferID, transferTitle) {
   const { length } = array;
   const found = array.some(el => el.title === transferTitle);
@@ -35,12 +38,6 @@ function add(array, transferID, transferTitle) {
   return array;
 }
 function renderSchedule(){
-  storeFetch = localStorage.getItem('TVtracker')
-  storeFetch = JSON.parse(storeFetch)
-  if (!storeFetch){
-    storeFetch = []
-  }
-  //console.log(storeFetch)
   var i;
   for (i = 0; i < storeFetch.length; i++) {
     $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+storeFetch[i].id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].title+'">'+storeFetch[i].title+'</a></span></div>')
@@ -58,11 +55,6 @@ function renderSchedule(){
 
 }
 function renderTV(searchQuery){
-  storeFetch = localStorage.getItem('TVtracker')
-  storeFetch = JSON.parse(storeFetch)
-  if (!storeFetch){
-    storeFetch = []
-  }
   var tvAPISearch = 'https://api.tvmaze.com/search/shows?q='+searchQuery
   $.getJSON(tvAPISearch, function(tv) {
     // Remove previous search results
@@ -185,8 +177,11 @@ function renderTV(searchQuery){
       $("#result-"+val.show.id).fadeIn(600, 'swing')
       $('#result-'+val.show.id).append('<div class="column poster"><img src="'+showImg+'" /></div>')
       $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
-      // ToDO: Check save status. If already tracking change the icon and function
-      $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
+      if (storeFetch.find(obj => obj.id == val.show.id)){
+        $('#result-'+val.show.id).append('<div class="show-remove" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
+      } else {
+        $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
+      }
       $('#result-'+val.show.id+' .show-add').click(function(){
         storeID = $('#result-'+val.show.id+' .show-add').data("id")
         storeTitle = $('#result-'+val.show.id+' .show-add').data("title")
