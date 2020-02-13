@@ -220,7 +220,7 @@ function renderTV(searchQuery){
         $("#column-right-"+val.show.id).append('<li>'+showType+'</li>')
       }
       $("#tvColumn").append('</div></div></div>')
-      omdb_imdb = $("<div>").addClass("omdbapi_imdb")
+/*       omdb_imdb = $("<div>").addClass("omdbapi_imdb")
       omdbURL = 'https://www.omdbapi.com/?t='+showTitle+'&apikey='+omdbAPI
       $.getJSON(omdbURL, function(omdbreturn) {
         if (omdbreturn.imdbRating){
@@ -231,7 +231,7 @@ function renderTV(searchQuery){
         }
         //console.log(omdb_imdb)
         $("#column-right-"+val.show.id).after(omdb_imdb)
-      })
+      }) */
     })
   })
 }
