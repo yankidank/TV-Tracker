@@ -182,7 +182,7 @@ function renderTV(searchQuery){
       } else {
         $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
       }
-      $('#result-'+val.show.id+' .show-add').click(function(){
+      $('#result-'+val.show.id+' div span').click(function(){
         storeID = $('#result-'+val.show.id+' .show-add').data("id")
         storeTitle = $('#result-'+val.show.id+' .show-add').data("title")
         $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeTitle+'">'+storeTitle+'</a></span></div>')

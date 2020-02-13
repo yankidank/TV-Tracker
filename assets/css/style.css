@@ -30,13 +30,14 @@
     background:#fff;
     box-shadow: 3px 0px 10px #c9c9c9;
 }
-.show-add {
+.show-add, .show-remove {
     font-size:2.8rem;
     position:absolute;
     top: -8px;
     right: 14px;
+    z-index:99;
 }
-.show-add:hover {
+.show-add:hover, .show-remove:hover {
     cursor:pointer;
 }
 .side_show_list {
