@@ -14,7 +14,7 @@ var showType
 var showGenres
 var showTvrage
 var showTvdb
-var showImdb 
+var showImdb
 var showUpdated
 var showSummary
 var omdbAPI = '473a48b9'
@@ -76,7 +76,7 @@ function renderTV(searchQuery){
         } else {
           var showImg = './assets/img/poster.png'
         }
-        if (val.show.image.medium){
+        if (val.show.image.medium) {
           var showImgMed = val.show.image.medium
         } else {
           var showImg = './assets/img/poster.png'
@@ -85,94 +85,94 @@ function renderTV(searchQuery){
         //console.log('null images')
         var showImg = './assets/img/poster.png'
       }
-      if (val.show.name){
+      if (val.show.name) {
         showTitle = val.show.name
       } else {
         //console.log('null name')
         showTitle = ''
       }
-      if (val.show.url){
+      if (val.show.url) {
         showURL = val.show.url
       } else {
         //console.log('null url')
         showURL = '#'
       }
-      if (val.show.status){
+      if (val.show.status) {
         showStatus = val.show.status
       } else {
         //console.log('null status')
       }
-      if (val.show.runtime){
+      if (val.show.runtime) {
         showScheduleDays = val.show.schedule.days
       } else {
         //console.log('null schedule days')
       }
-      if (val.show.runtime){
+      if (val.show.runtime) {
         showScheduleTime = val.show.schedule.time
       } else {
         //console.log('null schedule time')
       }
-      if (val.show.runtime){
+      if (val.show.runtime) {
         showRuntime = val.show.runtime
       } else {
         //console.log('null runtime')
       }
-      if (val.show.premiered){
+      if (val.show.premiered) {
         showPremiere = val.show.premiered
       } else {
         //console.log('null premiere')
       }
-      if (val.rating){
-        if (val.rating.average){
+      if (val.rating) {
+        if (val.rating.average) {
           showRatingAvg = val.rating.average
         }
       } else {
         //console.log('null rating')
       }
-      if (val.show.network){
-        if (val.show.network.name){
+      if (val.show.network) {
+        if (val.show.network.name) {
           showNetwork = val.show.network.name
         }
       } else {
         //console.log('null network name')
       }
-      if (val.show.type){
+      if (val.show.type) {
         showType = val.show.type
       } else {
         //console.log('null type')
       }
-      if (val.show.showGenres){
+      if (val.show.showGenres) {
         showType = val.show.showGenres
       } else {
         //console.log('null genres')
       }
-      if (val.show.externals){
-        if (val.show.externals.tvrage){
+      if (val.show.externals) {
+        if (val.show.externals.tvrage) {
           showTvrage = val.show.externals.tvrage
         }
       } else {
         //console.log('null tvRage')
       }
-      if (val.show.externals){
-        if (val.show.externals.thetvdb){
+      if (val.show.externals) {
+        if (val.show.externals.thetvdb) {
           showTvdb = val.show.externals.thetvdb
         }
       } else {
         //console.log('null tvdb')
       }
-      if (val.show.externals){
-        if (val.show.externals.imdb){
+      if (val.show.externals) {
+        if (val.show.externals.imdb) {
           showImdb = val.show.externals.imdb
         }
       } else {
         //console.log('null imdb')
       }
-      if (val.show.updated){
+      if (val.show.updated) {
         showUpdated = val.show.updated
       } else {
         //console.log('null updated')
       }
-      if (val.show.summary){
+      if (val.show.summary) {
         showSummary = val.show.summary
       } else {
         //console.log('null summary')
@@ -222,20 +222,19 @@ function renderTV(searchQuery){
         $("#column-right-"+val.show.id).append('<li>'+showType+'</li>')
       }
       $("#tvColumn").append('</div></div></div>')
-/*       omdb_imdb = $("<div>").addClass("omdbapi_imdb")
-      omdbURL = 'https://www.omdbapi.com/?t='+showTitle+'&apikey='+omdbAPI
+
+      //omdb search for IMDB rating
+      var IMDBID = val.show.externals.imdb
+      omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
       $.getJSON(omdbURL, function(omdbreturn) {
         if (omdbreturn.imdbRating){
-          omdb_imdb.html('<li>IMDB: '+omdbreturn.imdbRating+'</li>')
-          //console.log(omdbreturn.imdbRating)
+          $("#column-right-"+val.show.id).append('<li>IMDB: '+omdbreturn.imdbRating+'</li>')
         } else {
-          //console.log('No imdb rating')
+          console.log('No imdb rating')
         }
         //console.log(omdb_imdb)
         $("#column-right-"+val.show.id).after(omdb_imdb)
-      }) */
-
-      /////////////////////////
+      })
       fanartAPISearch = 'http://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
       $.getJSON(fanartAPISearch, function(fanart) {
         // Remove previous search results
@@ -253,21 +252,8 @@ function renderTV(searchQuery){
         }
         console.log(bgImage)
         console.log(val.show.id)
-
         $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
-
-
-   /*      $("#result-"+val.show.id).css({
-          "background": "url('"+bgImage+"') no-repeat fixed top center",
-          "background-size": "100%",
-          "background-repeat": "no-repeat",
-          "overflow": "hidden"
-        }) */
-
-
-
       })
-      ////////////////////////   
     })
   })
 }
@@ -323,4 +309,3 @@ $(document).ready(function(){
     }, 25)
   })
 })
-
