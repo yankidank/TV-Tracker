@@ -30,8 +30,6 @@
     background:#fff;
     box-shadow: 3px 0px 10px #c9c9c9;
 }
-<<<<<<< HEAD
-=======
 .show-add {
     font-size:2.8rem;
     position:absolute;
@@ -106,9 +104,6 @@
     height:26px;
     width:26px;
 }
-<<<<<<< HEAD
->>>>>>> bf25e691df8ea349547d2b4534ce9eaa72813aba
-=======
 .new_track {
     background: rgba(81, 171, 84, 0.95);
     color: #fff;
@@ -122,4 +117,3 @@
 .notification a:not(.button):not(.dropdown-item):hover{
     text-decoration:underline;
 }
->>>>>>> d9d7c793ddc5381084e795df074f85568d0a2d28
