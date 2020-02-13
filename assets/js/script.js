@@ -273,7 +273,8 @@ $(document).ready(function(){
       if(window.location.hash) {
         var hash = window.location.hash.substring(1)
         renderTV(hash)
+        $("html, body").animate({ scrollTop: 0 }, "slow")
       }
-    }, 75)
+    }, 25)
   })
 })
