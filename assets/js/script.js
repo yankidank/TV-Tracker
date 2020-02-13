@@ -225,15 +225,15 @@ function renderTV(searchQuery){
       fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
       $.getJSON(fanartAPISearch, function(fanart) {
         //console.log(fanart)
-        if (fanart.tvposter[0].url){
+        if (fanart.tvposter && fanart.tvposter[0].url){
           bgImage = fanart.tvposter[0].url        
-        } else if (fanart.hdclearart[0].url){
+        } else if (fanart.hdclearart && fanart.hdclearart[0].url){
           bgImage = fanart.hdclearart[0].url
-        } else if (fanart.hdtvlogo[0].url){
+        } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
           bgImage = fanart.hdtvlogo[0].url
-        } else if (fanart.tvposter[0].url){
+        } else if (fanart.tvposter && fanart.tvposter[0].url){
           bgImage = fanart.tvposter[0].url
-        } else if (fanart.showbackground[0].url){
+        } else if (fanart.showbackground && fanart.showbackground[0].url){
           bgImage = fanart.showbackground[0].url
         }
         //console.log(bgImage)
