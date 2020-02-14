@@ -30,8 +30,6 @@
     background:#fff;
     box-shadow: 3px 0px 10px #c9c9c9;
 }
-<<<<<<< HEAD
-=======
 .show-add {
     font-size:2.8rem;
     position:absolute;
@@ -52,6 +50,7 @@
 }
 .footer {
     background:#e8e8e840;
+    padding: 2rem 1.5rem 2rem;
 }
 .tracking_title {
     margin-bottom:12px;
@@ -106,7 +105,22 @@
     height:26px;
     width:26px;
 }
-
+.tv-result {
+    position: relative;
+    overflow: hidden;
+}
+.tv-result .column {
+    position: relative;
+    z-index: 2;
+} 
+.tv-result img.tv-background {
+    position: absolute;
+    left: 0;
+    top: -125px;
+    width: 100%;
+    height: auto;
+    opacity: 0.1;
+}
 .new_track {
     background: rgba(81, 171, 84, 0.95);
     color: #fff;
