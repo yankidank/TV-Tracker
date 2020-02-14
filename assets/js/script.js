@@ -33,7 +33,7 @@ if (!storeFetch || jQuery.isEmptyObject(storeFetch[0]) ){
 }
 function add(array, transferID, transferTitle) {
   const { length } = array
-  const found = array.some(el => el.title === transferTitle)
+  const found = array.some(el => el.id === transferTitle)
   if (!found) array.push({ id: transferID, title: transferTitle })
   return array
 }
