@@ -295,13 +295,15 @@ function renderTV(searchQuery){
           }
           //console.log(bgImage)
           //console.log(val.show.id)
-          $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
+          $("#result-"+val.show.id+" .tv-background").empty()
+          $("#result-"+val.show.id).append('<img class="tv-background" id="background_image_'+val.show.id+'" src="'+bgImage+'" />')
         },
         error: function(e) {
           bgImage = showImg
           //console.log(e.responseJSON.status)
           //console.log(e.responseJSON['error message'])
-          $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
+          $("#result-"+val.show.id+" .tv-background").empty()
+          $("#result-"+val.show.id).append('<img class="tv-background background-push" id="background_image_'+val.show.id+'" src="'+bgImage+'" />')
         }
       })
       function getVideo() {

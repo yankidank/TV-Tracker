@@ -134,6 +134,9 @@
     opacity: 0.1;
     min-height:305px;
 }
+.tv-result img.background-push {
+    top:-200px;
+}
 @media screen and (max-width: 1215px) {
     .tv-result img.tv-background {
         top: 0px;
