@@ -1,28 +1,32 @@
 input-bar {
     width: 600px;
-    }
-    
-    .button {
-        margin-left:auto;
-    }
-    
-    .poster {
-        max-width: 180px;
-        height: 270px;
-    }
-    
-    .buttons {
+}
+.button {
+    margin-left:auto;
+}
+.poster {
+    max-width: 180px;
+}
+.buttons {
     align-items: right;
-    }
-    
-    .details {
-        max-width: 650px;
-    }
-    
-    .tv-result {
-        display: flex;
-    }
-    
-    .control {
-        display: flex;
-    }
+}
+.details {
+    max-width: 650px;
+}
+.tv-result {
+    display: flex;
+}
+.control {
+    display: flex;
+}
+.hero-body {
+    background:#242424;
+    color:#fff;
+}
+.title {
+    color:#fff;
+}
+.poster {
+    background:#fff;
+    box-shadow: 3px 0px 10px #c9c9c9;
+}
