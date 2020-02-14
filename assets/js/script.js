@@ -28,7 +28,7 @@ var fanartAPISearch
 var bgImage
 var storeFetch = localStorage.getItem('TVtracker')
 storeFetch = JSON.parse(storeFetch)
-if (!storeFetch){
+if (!storeFetch || jQuery.isEmptyObject(storeFetch[0]) ){
   storeFetch = []
 }
 function add(array, transferID, transferTitle) {
@@ -36,6 +36,11 @@ function add(array, transferID, transferTitle) {
   const found = array.some(el => el.title === transferTitle);
   if (!found) array.push({ id: transferID, title: transferTitle });
   return array;
+}
+function decodeHtml(str){
+  var txt = document.createElement("textarea");
+  txt.innerHTML = str;
+  return txt.value;
 }
 function renderSchedule(){
   var i;
@@ -182,11 +187,53 @@ function renderTV(searchQuery){
       } else {
         $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
       }
-      $('#result-'+val.show.id+' div span').click(function(){
+      $('#result-'+val.show.id+' div span.icon-remove').click(function(){
         storeID = $('#result-'+val.show.id+' .show-add').data("id")
         storeTitle = $('#result-'+val.show.id+' .show-add').data("title")
+        $(this).toggleClass("icon-save")
+        $(this).toggleClass("icon-remove")
+        //$("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeTitle+'">'+storeTitle+'</a></span></div>')
+        //$('[data-side-id="side_'+val.show.id+'"]').toggleClass('remove_track', 300).toggleClass('new_track', 300)
+        $('[data-side-id="side_'+val.show.id+'"]').removeClass('new_track')
+        $('[data-side-id="side_'+val.show.id+'"]').addClass('remove_track')
+        setTimeout(function(){
+          $('[data-side-id="side_'+val.show.id+'"]').fadeOut( "slow", function() {
+            $('[data-side-id="side_'+val.show.id+'"]').remove()
+          });
+        }, 1000)
+        //$('[data-side-id="side_'+val.show.id+'"]').toggle("highlight")
+        var found = {}
+        $('[data-side-id]').each(function(){
+          var $this = $(this)
+          if(found[$this.data('side-id')]){
+            $this.remove()
+          }
+          else{
+            found[$this.data('side-id')] = true;   
+          }
+        })
+        var trimArray = storeFetch.filter(function(obj) {
+          return obj.id !== val.show.id
+        })
+        storeFetch = add(trimArray, storeID, storeTitle) // Function to prevent duplicate entries
+        localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+      })
+      $('#result-'+val.show.id+' div span.icon-save').click(function(){
+        storeID = $('#result-'+val.show.id+' .show-add').data("id")
+        storeTitle = $('#result-'+val.show.id+' .show-add').data("title")
+        $(this).toggleClass("icon-save")
+        $(this).toggleClass("icon-remove")
         $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeTitle+'">'+storeTitle+'</a></span></div>')
-        $('[data-side-id="side_'+val.show.id+'"]').addClass('new_track')
+        //$('[data-side-id="side_'+val.show.id+'"]').toggleClass('new_track', 300).toggleClass('remove_track', 300)
+        //$('[data-side-id="side_'+val.show.id+'"]').toggleClass('remove_track', 500).toggleClass('new_track', 500)
+        $('[data-side-id="side_'+val.show.id+'"]').removeClass('remove_track')
+        $('[data-side-id="side_'+val.show.id+'"]').fadeIn( "slow", function() {
+          $('[data-side-id="side_'+val.show.id+'"]').addClass('new_track')
+        })
+        setTimeout(function(){
+          $('[data-side-id="side_'+val.show.id+'"]').removeClass('new_track')
+        }, 1500)
+        //$('[data-side-id="side_'+val.show.id+'"]').toggle("highlight")
         // Check if the sidebar item already exists
         var found = {}
         $('[data-side-id]').each(function(){
@@ -198,9 +245,11 @@ function renderTV(searchQuery){
             found[$this.data('side-id')] = true;   
           }
         })
-        storeFetch = add(storeFetch, storeID, storeTitle) // Function to prevent duplicate entries
+        var trimArray = storeFetch.filter(function(obj) {
+          return obj.id !== val.show.id
+        })
+        storeFetch = add(trimArray, storeID, storeTitle) // Function to prevent duplicate entries
         localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
-        //console.log(storeFetch) // localStorage Array w/ Objects
       })
       $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
       if (showStatus){
@@ -226,14 +275,13 @@ function renderTV(searchQuery){
           //console.log('No imdb rating')
         }
       })
-
       function getVideo() {
       $.ajax({
         type: 'GET',
         url: 'https://www.googleapis.com/youtube/v3/search',
         data: {
             key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
-            q: searchQuery,
+            q: searchQuery+' ('+showYear+')',
             part: 'snippet',
             maxResults: 1,
             type: 'video',
@@ -244,17 +292,15 @@ function renderTV(searchQuery){
         },
       });
     }
-
-function embedVideo(data) {
-    $('iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
-    $('h3').text(data.items[0].snippet.title)
-    $('.description').text(data.items[0].snippet.description)
-}
-
-getVideo();
-      
-
-
+    function embedVideo(data) {
+      console.log(data.items)
+      $('#youtube_wrapper').show()
+      $('#youtube_embed .card-image iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
+      var shortYtitle = decodeHtml(jQuery.trim(data.items[0].snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
+      $('h2.youtube_title').text(shortYtitle)
+      $('#youtube_description').text(data.items[0].snippet.description)
+    }
+    getVideo()
       fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
       $.ajax({
         type: 'GET',
