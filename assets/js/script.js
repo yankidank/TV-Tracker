@@ -32,32 +32,31 @@ if (!storeFetch || jQuery.isEmptyObject(storeFetch[0]) ){
   storeFetch = []
 }
 function add(array, transferID, transferTitle) {
-  const { length } = array;
-  const found = array.some(el => el.title === transferTitle);
-  if (!found) array.push({ id: transferID, title: transferTitle });
-  return array;
+  const { length } = array
+  const found = array.some(el => el.title === transferTitle)
+  if (!found) array.push({ id: transferID, title: transferTitle })
+  return array
 }
 function decodeHtml(str){
-  var txt = document.createElement("textarea");
-  txt.innerHTML = str;
-  return txt.value;
+  var txt = document.createElement("textarea")
+  txt.innerHTML = str
+  return txt.value
 }
 function renderSchedule(){
-  var i;
+  var i
   for (i = 0; i < storeFetch.length; i++) {
     $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+storeFetch[i].id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].title+'">'+storeFetch[i].title+'</a></span></div>')
   }
-  var found = {};
+  var found = {}
   $('[data-side-id]').each(function(){
-    var $this = $(this);
+    var $this = $(this)
     if(found[$this.data('side-id')]){
-      $this.remove();   
+      $this.remove()
     }
     else{
-      found[$this.data('side-id')] = true;   
+      found[$this.data('side-id')] = true
     }
-  }) 
-
+  })
 }
 function renderTV(searchQuery){
   var tvAPISearch = 'https://api.tvmaze.com/search/shows?q='+searchQuery
@@ -203,16 +202,6 @@ function renderTV(searchQuery){
           });
         }, 1000)
         //$('[data-side-id="side_'+val.show.id+'"]').toggle("highlight")
-        var found = {}
-        $('[data-side-id]').each(function(){
-          var $this = $(this)
-          if(found[$this.data('side-id')]){
-            $this.remove()
-          }
-          else{
-            found[$this.data('side-id')] = true;   
-          }
-        })
         var trimArray = storeFetch.filter(function(obj) {
           return obj.id !== val.show.id
         })
