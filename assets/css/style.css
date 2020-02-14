@@ -44,6 +44,10 @@
     background:#fff;
     padding:6px 0px 6px 11px;
     box-shadow:2px 2px 4px #bebebe;
+    -webkit-transition: all 1.5s ease;
+    -moz-transition: all 1.5s ease;
+    -o-transition: all 1.5s ease;
+    transition: all 1.5s ease;
 }
 .notification {
     padding:1.5rem 1.5rem 1.5rem 1.5rem;
@@ -128,6 +132,13 @@
     .tv-result img.tv-background {
         top: 0px;
     }
+}
+#side_track_undefined {
+    display:none; /* CSS hack */
+}
+.remove_track {
+    background: rgba(172, 36, 36, 0.95);
+    color: #fff;
 }
 .new_track {
     background: rgba(81, 171, 84, 0.95);
