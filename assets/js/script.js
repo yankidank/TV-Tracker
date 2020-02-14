@@ -31,12 +31,16 @@ storeFetch = JSON.parse(storeFetch)
 if (!storeFetch || jQuery.isEmptyObject(storeFetch[0]) ){
   storeFetch = []
 }
-
 function add(array, transferID, transferTitle) {
   const { length } = array;
   const found = array.some(el => el.title === transferTitle);
   if (!found) array.push({ id: transferID, title: transferTitle });
   return array;
+}
+function decodeHtml(str){
+  var txt = document.createElement("textarea");
+  txt.innerHTML = str;
+  return txt.value;
 }
 function renderSchedule(){
   var i;
@@ -271,7 +275,6 @@ function renderTV(searchQuery){
           //console.log('No imdb rating')
         }
       })
-
       function getVideo() {
       $.ajax({
         type: 'GET',
@@ -289,17 +292,15 @@ function renderTV(searchQuery){
         },
       });
     }
-
-function embedVideo(data) {
-    $('iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
-    $('h3').text(data.items[0].snippet.title)
-    $('.description').text(data.items[0].snippet.description)
-}
-
-getVideo();
-      
-
-
+    function embedVideo(data) {
+      console.log(data.items)
+      $('#youtube_wrapper').show()
+      $('#youtube_embed .card-image iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
+      var shortYtitle = decodeHtml(jQuery.trim(data.items[0].snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
+      $('h2.youtube_title').text(shortYtitle)
+      $('#youtube_description').text(data.items[0].snippet.description)
+    }
+    getVideo()
       fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
       $.ajax({
         type: 'GET',

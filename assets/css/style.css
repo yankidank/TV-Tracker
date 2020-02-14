@@ -43,7 +43,7 @@
 .side_show_list {
     background:#fff;
     padding:6px 0px 6px 11px;
-    box-shadow:2px 2px 4px #bebebe;
+    box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.02);
     -webkit-transition: all 1.5s ease;
     -moz-transition: all 1.5s ease;
     -o-transition: all 1.5s ease;
@@ -56,6 +56,12 @@
 .footer {
     background:#e8e8e840;
     padding: 2rem 1.5rem 2rem;
+}
+#tracking_side {
+    background-color:none;
+    border-radius: 4px;
+    padding: 0;
+    position: relative;
 }
 .tracking_title {
     margin-bottom:12px;
@@ -152,4 +158,14 @@
 }
 .notification a:not(.button):not(.dropdown-item):hover{
     text-decoration:underline;
+}
+#youtube_embed {
+    margin-bottom:20px;
+}
+#youtube_description {
+    overflow:auto;
+    font-size: 0.9rem;
+}
+#youtube_wrapper {
+    display:none;
 }
