@@ -76,11 +76,12 @@ function renderTV(searchQuery){
         if (val.show.image.medium) {
           var showImgMed = val.show.image.medium
         } else {
-          var showImg = './assets/img/poster.png'
+          var showImgMed = './assets/img/poster.png'
         }
       } else {
         //console.log('null images')
         var showImg = './assets/img/poster.png'
+        var showImgMed = './assets/img/poster.png'
       }
       if (val.show.name) {
         showTitle = val.show.name
@@ -180,7 +181,7 @@ function renderTV(searchQuery){
       $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')
       $("#result-"+val.show.id).hide()
       $("#result-"+val.show.id).fadeIn(600, 'swing')
-      $('#result-'+val.show.id).append('<div class="column poster"><img src="'+showImg+'" /></div>')
+      $('#result-'+val.show.id).append('<div class="column poster"><img src="'+showImgMed+'" /></div>')
       $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
       if (storeFetch.find(obj => obj.id == val.show.id)){
         $('#result-'+val.show.id).append('<div class="show-remove" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
@@ -275,55 +276,60 @@ function renderTV(searchQuery){
           //console.log('No imdb rating')
         }
       })
-      function getVideo() {
+      fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
       $.ajax({
         type: 'GET',
-        url: 'https://www.googleapis.com/youtube/v3/search',
-        data: {
+        url: fanartAPISearch,
+        success: function(fanart) {
+          //console.log(fanart)
+          if (fanart.hdclearart && fanart.hdclearart[0].url){
+            bgImage = fanart.hdclearart[0].url
+          } else if (fanart.showbackground && fanart.showbackground[0].url){
+            bgImage = fanart.showbackground[0].url
+          } else if (fanart.tvposter && fanart.tvposter[0].url){
+            bgImage = fanart.tvposter[0].url
+          } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
+            bgImage = fanart.hdtvlogo[0].url
+          } else {
+            bgImage = showImg
+          }
+          //console.log(bgImage)
+          //console.log(val.show.id)
+          $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
+        },
+        error: function(e) {
+          bgImage = showImg
+          //console.log(e.responseJSON.status)
+          //console.log(e.responseJSON['error message'])
+          $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
+        }
+      })
+      function getVideo() {
+        $.ajax({
+          type: 'GET',
+          url: 'https://www.googleapis.com/youtube/v3/search',
+          data: {
             key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
             q: searchQuery+' ('+showYear+')',
             part: 'snippet',
             maxResults: 1,
             type: 'video',
             videoEmbeddable: true,
-        },
-        success: function(data){
+          },
+          success: function(data){
             embedVideo(data)
-        },
-      })
-    }
-    function embedVideo(data) {
-      console.log(data.items)
-      $('#youtube_wrapper').show()
-      $('#youtube_embed .card-image iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
-      var shortYtitle = decodeHtml(jQuery.trim(data.items[0].snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
-      $('h2.youtube_title').text(shortYtitle)
-      $('#youtube_description').text(data.items[0].snippet.description)
-    }
-    getVideo()
-    fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
-    $.ajax({
-      type: 'GET',
-      url: fanartAPISearch,
-      success: function(fanart) {
-        //console.log(fanart)
-        if (fanart.hdclearart && fanart.hdclearart[0].url){
-          bgImage = fanart.hdclearart[0].url
-        } else if (fanart.showbackground && fanart.showbackground[0].url){
-          bgImage = fanart.showbackground[0].url
-        } else if (fanart.tvposter && fanart.tvposter[0].url){
-          bgImage = fanart.tvposter[0].url
-        } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
-          bgImage = fanart.hdtvlogo[0].url
-        }
-        //console.log(bgImage)
-        //console.log(val.show.id)
-          $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
-      },
-      error: function(e) {
-        //console.log(e.responseJSON.status)
-        //console.log(e.responseJSON['error message'])
+          },
+        })
+       }
+      function embedVideo(data) {
+        console.log(data.items)
+        $('#youtube_wrapper').show()
+        $('#youtube_embed .card-image iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
+        var shortYtitle = decodeHtml(jQuery.trim(data.items[0].snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
+        $('h2.youtube_title').text(shortYtitle)
+        $('#youtube_description').text(data.items[0].snippet.description)
       }
+      getVideo()
     })
   })
 }
