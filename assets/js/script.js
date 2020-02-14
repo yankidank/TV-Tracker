@@ -227,12 +227,12 @@ function renderTV(searchQuery){
         //$('[data-side-id="side_'+val.show.id+'"]').toggleClass('new_track', 300).toggleClass('remove_track', 300)
         //$('[data-side-id="side_'+val.show.id+'"]').toggleClass('remove_track', 500).toggleClass('new_track', 500)
         $('[data-side-id="side_'+val.show.id+'"]').removeClass('remove_track')
-        $('[data-side-id="side_'+val.show.id+'"]').fadeIn( "slow", function() {
+        $('[data-side-id="side_'+val.show.id+'"]').fadeIn( "medium", function() {
           $('[data-side-id="side_'+val.show.id+'"]').addClass('new_track')
         })
         setTimeout(function(){
           $('[data-side-id="side_'+val.show.id+'"]').removeClass('new_track')
-        }, 1500)
+        }, 1000)
         //$('[data-side-id="side_'+val.show.id+'"]').toggle("highlight")
         // Check if the sidebar item already exists
         var found = {}
@@ -290,7 +290,7 @@ function renderTV(searchQuery){
         success: function(data){
             embedVideo(data)
         },
-      });
+      })
     }
     function embedVideo(data) {
       console.log(data.items)
@@ -301,30 +301,29 @@ function renderTV(searchQuery){
       $('#youtube_description').text(data.items[0].snippet.description)
     }
     getVideo()
-      fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
-      $.ajax({
-        type: 'GET',
-        url: fanartAPISearch,
-        success: function(fanart) {
-          //console.log(fanart)
-          if (fanart.hdclearart && fanart.hdclearart[0].url){
-            bgImage = fanart.hdclearart[0].url
-          } else if (fanart.showbackground && fanart.showbackground[0].url){
-            bgImage = fanart.showbackground[0].url
-          } else if (fanart.tvposter && fanart.tvposter[0].url){
-            bgImage = fanart.tvposter[0].url
-          } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
-            bgImage = fanart.hdtvlogo[0].url
-          }
-          //console.log(bgImage)
-          //console.log(val.show.id)
-            $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
-        },
-        error: function(e) {
-          //console.log(e.responseJSON.status)
-          //console.log(e.responseJSON['error message'])
+    fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
+    $.ajax({
+      type: 'GET',
+      url: fanartAPISearch,
+      success: function(fanart) {
+        //console.log(fanart)
+        if (fanart.hdclearart && fanart.hdclearart[0].url){
+          bgImage = fanart.hdclearart[0].url
+        } else if (fanart.showbackground && fanart.showbackground[0].url){
+          bgImage = fanart.showbackground[0].url
+        } else if (fanart.tvposter && fanart.tvposter[0].url){
+          bgImage = fanart.tvposter[0].url
+        } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
+          bgImage = fanart.hdtvlogo[0].url
         }
-      })
+        //console.log(bgImage)
+        //console.log(val.show.id)
+          $("#result-"+val.show.id).append('<img class="tv-background" src="'+bgImage+'" />')
+      },
+      error: function(e) {
+        //console.log(e.responseJSON.status)
+        //console.log(e.responseJSON['error message'])
+      }
     })
   })
 }
