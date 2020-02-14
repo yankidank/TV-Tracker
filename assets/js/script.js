@@ -281,7 +281,7 @@ function renderTV(searchQuery){
         url: 'https://www.googleapis.com/youtube/v3/search',
         data: {
             key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
-            q: searchQuery,
+            q: searchQuery+' ('+showYear+')',
             part: 'snippet',
             maxResults: 1,
             type: 'video',
