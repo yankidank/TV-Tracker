@@ -226,6 +226,35 @@ function renderTV(searchQuery){
           //console.log('No imdb rating')
         }
       })
+
+      function getVideo() {
+      $.ajax({
+        type: 'GET',
+        url: 'https://www.googleapis.com/youtube/v3/search',
+        data: {
+            key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
+            q: searchQuery,
+            part: 'snippet',
+            maxResults: 1,
+            type: 'video',
+            videoEmbeddable: true,
+        },
+        success: function(data){
+            embedVideo(data)
+        },
+      });
+    }
+
+function embedVideo(data) {
+    $('iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
+    $('h3').text(data.items[0].snippet.title)
+    $('.description').text(data.items[0].snippet.description)
+}
+
+getVideo();
+      
+
+
       fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
       $.ajax({
         type: 'GET',
