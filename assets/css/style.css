@@ -129,10 +129,13 @@
     position: absolute;
     left: 0;
     top: -80px;
-    width: auto;
+    width: 100%;
     height: auto;
     opacity: 0.1;
     min-height:305px;
+}
+.tv-result img.background-push {
+    top:-200px;
 }
 @media screen and (max-width: 1215px) {
     .tv-result img.tv-background {
