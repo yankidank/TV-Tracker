@@ -46,7 +46,7 @@ function renderSchedule(){
   for (i = 0; i < storeFetch.length; i++) {
     $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+storeFetch[i].id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].id+'">'+storeFetch[i].title+'</a></span></div>')
   }
-  console.log(storeFetch)
+  //console.log(storeFetch)
   var found = {}
   $('[data-side-id]').each(function(){
     var $this = $(this)
@@ -323,6 +323,243 @@ function renderTV(searchQuery){
     }
   })
 }
+function renderShow(showId){
+  var tvAPISearch = 'https://api.tvmaze.com/shows/'+showId
+  $.ajax({
+    type: 'GET',
+    url: tvAPISearch,
+    dataType: "json",
+    success: function(val) {
+      // Remove previous search results
+      $("#tvColumn").empty()
+      //console.log(val)
+      if (val.image){
+        if (val.image.original){
+          var showImg = val.image.original
+        } else {
+          var showImg = './assets/img/poster.png'
+        }
+        if (val.image.medium) {
+          var showImgMed = val.image.medium
+        } else {
+          var showImgMed = './assets/img/poster.png'
+        }
+      } else {
+        //console.log('null images')
+        var showImg = './assets/img/poster.png'
+        var showImgMed = './assets/img/poster.png'
+      }
+      if (val.name) {
+        showTitle = val.name
+      } else {
+        //console.log('null name')
+        showTitle = ''
+      }
+      if (val.url) {
+        showURL = val.url
+      } else {
+        //console.log('null url')
+        showURL = '#'
+      }
+      if (val.status) {
+        showStatus = val.status
+      } else {
+        //console.log('null status')
+      }
+      if (val.runtime) {
+        showScheduleDays = val.schedule.days
+      } else {
+        //console.log('null schedule days')
+      }
+      if (val.runtime) {
+        showScheduleTime = val.schedule.time
+      } else {
+        //console.log('null schedule time')
+      }
+      if (val.runtime) {
+        showRuntime = val.runtime
+      } else {
+        //console.log('null runtime')
+      }
+      if (val.premiered) {
+        showPremiere = val.premiered
+      } else {
+        //console.log('null premiere')
+      }
+      if (val.rating) {
+        if (val.rating.average) {
+          showRatingAvg = val.rating.average
+        }
+      } else {
+        //console.log('null rating')
+      }
+      if (val.network) {
+        if (val.network.name) {
+          showNetwork = val.network.name
+        }
+      } else {
+        //console.log('null network name')
+      }
+      if (val.type) {
+        showType = val.type
+      } else {
+        //console.log('null type')
+      }
+      if (val.showGenres) {
+        showType = val.showGenres
+      } else {
+        //console.log('null genres')
+      }
+      if (val.externals) {
+        if (val.externals.tvrage) {
+          showTvrage = val.externals.tvrage
+        }
+      } else {
+        //console.log('null tvRage')
+      }
+      if (val.externals) {
+        if (val.externals.thetvdb) {
+          showTvdb = val.externals.thetvdb
+        }
+      } else {
+        //console.log('null tvdb')
+      }
+      if (val.externals) {
+        if (val.externals.imdb) {
+          showImdb = val.externals.imdb
+        }
+      } else {
+        //console.log('null imdb')
+      }
+      if (val.updated) {
+        showUpdated = val.updated
+      } else {
+        //console.log('null updated')
+      }
+      if (val.summary) {
+        showSummary = val.summary
+      } else {
+        //console.log('null summary')
+      }
+      if (showPremiere){
+        var showYear = showPremiere.slice(0, -6);
+      }
+      $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.id+'">')
+      $("#result-"+val.id).hide()
+      $("#result-"+val.id).fadeIn(600, 'swing')
+      $('#result-'+val.id).append('<div class="column poster"><img src="'+showImgMed+'" /></div>')
+      $('#result-'+val.id).append('<div class="column details" id="column-'+val.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
+      if (storeFetch.find(obj => obj.id == val.id)){
+        $('#result-'+val.id).append('<div class="show-remove" data-id="'+val.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
+      } else {
+        $('#result-'+val.id).append('<div class="show-add" data-id="'+val.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
+      }
+      $('#result-'+val.id+' div span.icon-remove').click(function(){
+        $(this).toggleClass("icon-save")
+        $(this).toggleClass("icon-remove")
+        $('[data-side-id="side_'+val.id+'"]').removeClass('new_track')
+        $('[data-side-id="side_'+val.id+'"]').addClass('remove_track')
+        setTimeout(function(){
+          $('[data-side-id="side_'+val.id+'"]').fadeOut( "slow", function() {
+            $('[data-side-id="side_'+val.id+'"]').remove()
+          });
+        }, 1000)
+        var trimArray = storeFetch.filter(function(obj) {
+          return obj.id !== val.id
+        })
+        storeFetch = add(trimArray, val.id, val.name) // Function to prevent duplicate entries
+        localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+      })
+      $('#result-'+val.id+' div span.icon-save').click(function(){
+        $(this).toggleClass("icon-save")
+        $(this).toggleClass("icon-remove")
+        $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+val.id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+val.id+'">'+val.name+'</a></span></div>')
+        //$('[data-side-id="side_'+val.id+'"]').toggleClass('new_track', 300).toggleClass('remove_track', 300)
+        //$('[data-side-id="side_'+val.id+'"]').toggleClass('remove_track', 500).toggleClass('new_track', 500)
+        $('[data-side-id="side_'+val.id+'"]').removeClass('remove_track')
+        $('[data-side-id="side_'+val.id+'"]').fadeIn( "medium", function() {
+          $('[data-side-id="side_'+val.id+'"]').addClass('new_track')
+        })
+        setTimeout(function(){
+          $('[data-side-id="side_'+val.id+'"]').removeClass('new_track')
+        }, 1000)
+        //$('[data-side-id="side_'+val.id+'"]').toggle("highlight")
+        // Check if the sidebar item already exists
+        var found = {}
+        $('[data-side-id]').each(function(){
+          var $this = $(this)
+          if(found[$this.data('side-id')]){
+            $this.remove()
+          }
+          else{
+            found[$this.data('side-id')] = true;   
+          }
+        })
+        var trimArray = storeFetch.filter(function(obj) {
+          return obj.id !== val.id
+        })
+        storeFetch = add(trimArray, val.id, val.name) // Function to prevent duplicate entries
+        localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+      })
+      $('#column-'+val.id).append('<div class="column" id="column-right-'+val.id+'">')
+      if (showStatus){
+        $("#column-right-"+val.id).append('<li>'+showStatus+'</li>')
+      }
+      if (showRatingAvg){
+        $("#column-right-"+val.id).append('<li>'+showRatingAvg+'</li>')
+      }
+      if (showScheduleTime){
+        $("#column-right-"+val.id).append('<li>'+timeConvert(showScheduleTime)+'</li>')
+      }
+      if (showNetwork){
+        $("#column-right-"+val.id).append('<li>'+showNetwork+'</li>')
+      }
+      $("#tvColumn").append('</div></div></div>')
+      //omdb search for IMDB rating
+      var IMDBID = val.externals.imdb
+      omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
+      $.getJSON(omdbURL, function(omdbreturn) {
+        if (omdbreturn.imdbRating){
+          $("#column-right-"+val.id).append('<li>IMDB: '+omdbreturn.imdbRating+'</li>')
+        } else {
+          //console.log('No imdb rating')
+        }
+      })
+      fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
+      $.ajax({
+        type: 'GET',
+        url: fanartAPISearch,
+        success: function(fanart) {
+          //console.log(fanart)
+          if (fanart.hdclearart && fanart.hdclearart[0].url){
+            bgImage = fanart.hdclearart[0].url
+          } else if (fanart.showbackground && fanart.showbackground[0].url){
+            bgImage = fanart.showbackground[0].url
+          } else if (fanart.tvposter && fanart.tvposter[0].url){
+            bgImage = fanart.tvposter[0].url
+          } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
+            bgImage = fanart.hdtvlogo[0].url
+          } else {
+            bgImage = showImg
+          }
+          //console.log(bgImage)
+          //console.log(val.id)
+          $("#result-"+val.id+" .tv-background").empty()
+          $("#result-"+val.id).append('<img class="tv-background" id="background_image_'+val.id+'" src="'+bgImage+'" />')
+        },
+        error: function(e) {
+          bgImage = showImg
+          //console.log(e.responseJSON.status)
+          //console.log(e.responseJSON['error message'])
+          $("#result-"+val.id+" .tv-background").empty()
+          $("#result-"+val.id).append('<img class="tv-background background-push" id="background_image_'+val.show.id+'" src="'+bgImage+'" />')
+        }
+      })
+    },error: function(e) {
+      console.log(e)
+    }
+  })
+}
 function removeHash () { 
   history.pushState("", document.title, window.location.pathname + window.location.search);
 }
@@ -343,7 +580,6 @@ function timeConvert(APItime){
   }
   return itemTwelve + AMPM
 }
-
 $(document).ready(function(){
   removeHash()
   renderSchedule() // Display tracked show data
@@ -367,7 +603,7 @@ $(document).ready(function(){
       if(window.location.hash) {
         newhash = window.location.hash.substring(1)
         if (oldhash !== newhash){
-          renderTV(newhash)
+          renderShow(newhash)
           $("html, body").animate({ scrollTop: 165 }, "slow")
         }
         oldhash = newhash
