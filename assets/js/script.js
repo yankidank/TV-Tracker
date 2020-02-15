@@ -146,11 +146,6 @@ function renderTV(searchQuery){
           showType = val.show.showGenres
         } else {
           //console.log('null genres')
-        if (val.show.summary) {
-          showSummary = val.show.summary
-        } else {
-          //console.log('null summary')
-        }
         }
         if (val.show.externals) {
           if (val.show.externals.tvrage) {
@@ -250,11 +245,7 @@ function renderTV(searchQuery){
           storeFetch = add(trimArray, storeID, storeTitle) // Function to prevent duplicate entries
           localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
         })
-        // var shortTSummary = decodeHtml(jQuery.trim(val.show.summary.snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
-        //   $("#column-right-"+val.show.id).append.text(shortTSummary)
         $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
-        if (showSummary){
-          $("#column-right-"+val.show.id).append('<p>'+showSummary+'</p>')  
         if (showStatus){
           $("#column-right-"+val.show.id).append('<li>'+showStatus+'</li>')
         }
@@ -266,7 +257,6 @@ function renderTV(searchQuery){
         }
         if (showNetwork){
           $("#column-right-"+val.show.id).append('<li>'+showNetwork+'</li>')
-        }
         }
         $("#tvColumn").append('</div></div></div>')
         //omdb search for IMDB rating
@@ -314,10 +304,8 @@ function renderTV(searchQuery){
             type: 'GET',
             url: 'https://www.googleapis.com/youtube/v3/search',
             data: {
-              // If daily limit has been reached, switch keys
-              // key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE', 
-              key:'AIzaSyBouMGeEVyYqBK-kOdxqvpFtRqAmefjXXo',
-              q: searchQuery+' ('+showYear+')',
+              key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
+              q: searchQuery +' ('+showYear+')',
               part: 'snippet',
               maxResults: 1,
               type: 'video',
