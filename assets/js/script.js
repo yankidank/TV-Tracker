@@ -251,10 +251,9 @@ function renderTV(searchQuery){
           localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
         })
         // var shortTSummary = decodeHtml(jQuery.trim(val.show.summary.snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
-        //   $("#column-right-"+val.show.id).append.text(shortTSummary)
         $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
         if (showSummary){
-          $("#column-right-"+val.show.id).append('<p>'+showSummary+'</p>')  
+          $("#column-right-"+val.show.id).append('<p>'+showSummary+'</p>')
         if (showStatus){
           $("#column-right-"+val.show.id).append('<li>'+showStatus+'</li>')
         }
