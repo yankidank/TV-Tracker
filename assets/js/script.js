@@ -19,21 +19,20 @@ var showUpdated
 var showSummary
 var omdbAPI = '473a48b9'
 var index = 0
-var storeID
-var storeTitle
 var storePackage
 var hash
 var fanartAPI = 'b6854576836477401d01b1807776a52c'
 var fanartAPISearch
 var bgImage
-var storeFetch = localStorage.getItem('TVtracker')
+var storeFetch = []
+storeFetch = localStorage.getItem('TVtracker')
 storeFetch = JSON.parse(storeFetch)
 if (!storeFetch || jQuery.isEmptyObject(storeFetch[0]) ){
   storeFetch = []
 }
 function add(array, transferID, transferTitle) {
   const { length } = array
-  const found = array.some(el => el.id === transferTitle)
+  const found = array.some(el => el.id === transferID)
   if (!found) array.push({ id: transferID, title: transferTitle })
   return array
 }
@@ -45,8 +44,9 @@ function decodeHtml(str){
 function renderSchedule(){
   var i
   for (i = 0; i < storeFetch.length; i++) {
-    $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+storeFetch[i].id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].title+'">'+storeFetch[i].title+'</a></span></div>')
+    $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+storeFetch[i].id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].id+'">'+storeFetch[i].title+'</a></span></div>')
   }
+  console.log(storeFetch)
   var found = {}
   $('[data-side-id]').each(function(){
     var $this = $(this)
@@ -192,12 +192,8 @@ function renderTV(searchQuery){
           $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
         }
         $('#result-'+val.show.id+' div span.icon-remove').click(function(){
-          storeID = $('#result-'+val.show.id+' .show-add').data("id")
-          storeTitle = $('#result-'+val.show.id+' .show-add').data("title")
           $(this).toggleClass("icon-save")
           $(this).toggleClass("icon-remove")
-          //$("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeTitle+'">'+storeTitle+'</a></span></div>')
-          //$('[data-side-id="side_'+val.show.id+'"]').toggleClass('remove_track', 300).toggleClass('new_track', 300)
           $('[data-side-id="side_'+val.show.id+'"]').removeClass('new_track')
           $('[data-side-id="side_'+val.show.id+'"]').addClass('remove_track')
           setTimeout(function(){
@@ -205,19 +201,16 @@ function renderTV(searchQuery){
               $('[data-side-id="side_'+val.show.id+'"]').remove()
             });
           }, 1000)
-          //$('[data-side-id="side_'+val.show.id+'"]').toggle("highlight")
           var trimArray = storeFetch.filter(function(obj) {
             return obj.id !== val.show.id
           })
-          storeFetch = add(trimArray, storeID, storeTitle) // Function to prevent duplicate entries
+          storeFetch = add(trimArray, val.show.id, val.show.name) // Function to prevent duplicate entries
           localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
         })
         $('#result-'+val.show.id+' div span.icon-save').click(function(){
-          storeID = $('#result-'+val.show.id+' .show-add').data("id")
-          storeTitle = $('#result-'+val.show.id+' .show-add').data("title")
           $(this).toggleClass("icon-save")
           $(this).toggleClass("icon-remove")
-          $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+storeID+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeTitle+'">'+storeTitle+'</a></span></div>')
+          $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+val.show.id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+val.show.id+'">'+val.show.name+'</a></span></div>')
           //$('[data-side-id="side_'+val.show.id+'"]').toggleClass('new_track', 300).toggleClass('remove_track', 300)
           //$('[data-side-id="side_'+val.show.id+'"]').toggleClass('remove_track', 500).toggleClass('new_track', 500)
           $('[data-side-id="side_'+val.show.id+'"]').removeClass('remove_track')
@@ -242,7 +235,7 @@ function renderTV(searchQuery){
           var trimArray = storeFetch.filter(function(obj) {
             return obj.id !== val.show.id
           })
-          storeFetch = add(trimArray, storeID, storeTitle) // Function to prevent duplicate entries
+          storeFetch = add(trimArray, val.show.id, val.show.name) // Function to prevent duplicate entries
           localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
         })
         $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
@@ -317,7 +310,6 @@ function renderTV(searchQuery){
           })
         }
         function embedVideo(data) {
-          console.log(data.items)
           $('#youtube_wrapper').show()
           $('#youtube_embed .card-image iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
           var shortYtitle = decodeHtml(jQuery.trim(data.items[0].snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
