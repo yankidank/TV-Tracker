@@ -44,6 +44,50 @@ function decodeHtml(str){
   txt.innerHTML = str
   return txt.value
 }
+function clickSave(thisPass, id, name){
+  $('#result-'+id+' div.show-star span.icon').toggleClass("icon-save")
+  $('#result-'+id+' div.show-star span.icon').toggleClass("icon-remove")
+  $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+id+'">'+name+'</a></span></div>')
+  $('[data-side-id="side_'+id+'"]').removeClass('remove_track')
+  $('[data-side-id="side_'+id+'"]').fadeIn( "medium", function() {
+    $('[data-side-id="side_'+id+'"]').addClass('new_track')
+  })
+  setTimeout(function(){
+    $('[data-side-id="side_'+id+'"]').removeClass('new_track')
+  }, 1000)
+  // Check if the sidebar item already exists
+  var found = {}
+  $('[data-side-id]').each(function(){
+    var $thisPass = $(thisPass)
+    if(found[$thisPass.data('side-id')]){
+      $thisPass.remove()
+    }
+    else{
+      found[$thisPass.data('side-id')] = true;   
+    }
+  })
+  var trimArray = storeFetch.filter(function(obj) {
+    return obj.id !== id
+  })
+  storeFetch = addShow(trimArray, id, name) // Function to prevent duplicate entries
+  localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+}
+function clickRemove(thisPass, id){
+  $('#result-'+id+' div.show-star span.icon').toggleClass("icon-save")
+  $('#result-'+id+' div.show-star span.icon').toggleClass("icon-remove")
+  $('[data-side-id="side_'+id+'"]').removeClass('new_track')
+  $('[data-side-id="side_'+id+'"]').addClass('remove_track')
+  setTimeout(function(){
+  $('[data-side-id="side_'+id+'"]').fadeOut( "slow", function() {
+    $('[data-side-id="side_'+id+'"]').remove()
+  });
+  }, 1000)
+  var trimArray = storeFetch.filter(function(obj) {
+  return obj.id !== id
+  })
+  storeFetch = removeShow(trimArray, id)
+  localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+}
 function renderSchedule(){
   var i
   for (i = 0; i < storeFetch.length; i++) {
@@ -190,58 +234,15 @@ function renderTV(searchQuery){
         $('#result-'+val.show.id).append('<div class="column poster"><img src="'+showImgMed+'" /></div>')
         $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
         if (storeFetch.find(obj => obj.id == val.show.id)){
-          $('#result-'+val.show.id).append('<div class="show-remove" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
+          $('#result-'+val.show.id).append('<div class="show-star show-remove" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
         } else {
-          $('#result-'+val.show.id).append('<div class="show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
+          $('#result-'+val.show.id).append('<div class="show-star show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
         }
         $('#result-'+val.show.id+' div span.icon-remove').click(function(){
-          $(this).toggleClass("icon-save")
-          $(this).toggleClass("icon-remove")
-          $('[data-side-id="side_'+val.show.id+'"]').removeClass('new_track')
-          $('[data-side-id="side_'+val.show.id+'"]').addClass('remove_track')
-          setTimeout(function(){
-            $('[data-side-id="side_'+val.show.id+'"]').fadeOut( "slow", function() {
-              $('[data-side-id="side_'+val.show.id+'"]').remove()
-            });
-          }, 1000)
-          var trimArray = storeFetch.filter(function(obj) {
-            return obj.id !== val.show.id
-          })
-          console.log(trimArray)
-          storeFetch = removeShow(trimArray, val.show.id)
-          console.log(storeFetch)
-          localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+          clickRemove(this, val.show.id)
         })
         $('#result-'+val.show.id+' div span.icon-save').click(function(){
-          $(this).toggleClass("icon-save")
-          $(this).toggleClass("icon-remove")
-          $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+val.show.id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+val.show.id+'">'+val.show.name+'</a></span></div>')
-          //$('[data-side-id="side_'+val.show.id+'"]').toggleClass('new_track', 300).toggleClass('remove_track', 300)
-          //$('[data-side-id="side_'+val.show.id+'"]').toggleClass('remove_track', 500).toggleClass('new_track', 500)
-          $('[data-side-id="side_'+val.show.id+'"]').removeClass('remove_track')
-          $('[data-side-id="side_'+val.show.id+'"]').fadeIn( "medium", function() {
-            $('[data-side-id="side_'+val.show.id+'"]').addClass('new_track')
-          })
-          setTimeout(function(){
-            $('[data-side-id="side_'+val.show.id+'"]').removeClass('new_track')
-          }, 1000)
-          //$('[data-side-id="side_'+val.show.id+'"]').toggle("highlight")
-          // Check if the sidebar item already exists
-          var found = {}
-          $('[data-side-id]').each(function(){
-            var $this = $(this)
-            if(found[$this.data('side-id')]){
-              $this.remove()
-            }
-            else{
-              found[$this.data('side-id')] = true;   
-            }
-          })
-          var trimArray = storeFetch.filter(function(obj) {
-            return obj.id !== val.show.id
-          })
-          storeFetch = addShow(trimArray, val.show.id, val.show.name) // Function to prevent duplicate entries
-          localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+          clickSave(this, val.show.id, val.show.name)
         })
         $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
         
@@ -466,58 +467,15 @@ function renderShow(showId){
       $('#result-'+val.id).append('<div class="column poster"><img src="'+showImgMed+'" /></div>')
       $('#result-'+val.id).append('<div class="column details" id="column-'+val.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
       if (storeFetch.find(obj => obj.id == val.id)){
-        $('#result-'+val.id).append('<div class="show-remove" data-id="'+val.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
+        $('#result-'+val.id).append('<div class="show-star show-remove" data-id="'+val.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
       } else {
-        $('#result-'+val.id).append('<div class="show-add" data-id="'+val.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
+        $('#result-'+val.id).append('<div class="show-star show-add" data-id="'+val.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
       }
       $('#result-'+val.id+' div span.icon-remove').click(function(){
-        $(this).toggleClass("icon-save")
-        $(this).toggleClass("icon-remove")
-        $('[data-side-id="side_'+val.id+'"]').removeClass('new_track')
-        $('[data-side-id="side_'+val.id+'"]').addClass('remove_track')
-        setTimeout(function(){
-          $('[data-side-id="side_'+val.id+'"]').fadeOut( "slow", function() {
-            $('[data-side-id="side_'+val.id+'"]').remove()
-          });
-        }, 1000)
-        var trimArray = storeFetch.filter(function(obj) {
-          return obj.id !== val.id
-        })
-        console.log(trimArray)
-        storeFetch = removeShow(trimArray, val.id)
-        console.log(storeFetch)
-        localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+        clickRemove(this, val.id)
       })
       $('#result-'+val.id+' div span.icon-save').click(function(){
-        $(this).toggleClass("icon-save")
-        $(this).toggleClass("icon-remove")
-        $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+val.id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+val.id+'">'+val.name+'</a></span></div>')
-        //$('[data-side-id="side_'+val.id+'"]').toggleClass('new_track', 300).toggleClass('remove_track', 300)
-        //$('[data-side-id="side_'+val.id+'"]').toggleClass('remove_track', 500).toggleClass('new_track', 500)
-        $('[data-side-id="side_'+val.id+'"]').removeClass('remove_track')
-        $('[data-side-id="side_'+val.id+'"]').fadeIn( "medium", function() {
-          $('[data-side-id="side_'+val.id+'"]').addClass('new_track')
-        })
-        setTimeout(function(){
-          $('[data-side-id="side_'+val.id+'"]').removeClass('new_track')
-        }, 1000)
-        //$('[data-side-id="side_'+val.id+'"]').toggle("highlight")
-        // Check if the sidebar item already exists
-        var found = {}
-        $('[data-side-id]').each(function(){
-          var $this = $(this)
-          if(found[$this.data('side-id')]){
-            $this.remove()
-          }
-          else{
-            found[$this.data('side-id')] = true;   
-          }
-        })
-        var trimArray = storeFetch.filter(function(obj) {
-          return obj.id !== val.id
-        })
-        storeFetch = addShow(trimArray, val.id, val.name) // Function to prevent duplicate entries
-        localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+        clickSave(this, val.id, val.name)
       })
       $('#column-'+val.id).append('<div class="column" id="column-right-'+val.id+'">')
       if (showStatus){
