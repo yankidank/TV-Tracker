@@ -30,10 +30,13 @@ storeFetch = JSON.parse(storeFetch)
 if (!storeFetch || jQuery.isEmptyObject(storeFetch[0]) ){
   storeFetch = []
 }
-function add(array, transferID, transferTitle) {
+function addShow(array, transferID, transferTitle) {
   const { length } = array
   const found = array.some(el => el.id === transferID)
   if (!found) array.push({ id: transferID, title: transferTitle })
+  return array
+}
+function removeShow(array, transferID) {
   return array
 }
 function decodeHtml(str){
@@ -204,7 +207,9 @@ function renderTV(searchQuery){
           var trimArray = storeFetch.filter(function(obj) {
             return obj.id !== val.show.id
           })
-          storeFetch = add(trimArray, val.show.id, val.show.name) // Function to prevent duplicate entries
+          console.log(trimArray)
+          storeFetch = removeShow(trimArray, val.show.id)
+          console.log(storeFetch)
           localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
         })
         $('#result-'+val.show.id+' div span.icon-save').click(function(){
@@ -235,7 +240,7 @@ function renderTV(searchQuery){
           var trimArray = storeFetch.filter(function(obj) {
             return obj.id !== val.show.id
           })
-          storeFetch = add(trimArray, val.show.id, val.show.name) // Function to prevent duplicate entries
+          storeFetch = addShow(trimArray, val.show.id, val.show.name) // Function to prevent duplicate entries
           localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
         })
         $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
@@ -467,7 +472,9 @@ function renderShow(showId){
         var trimArray = storeFetch.filter(function(obj) {
           return obj.id !== val.id
         })
-        storeFetch = add(trimArray, val.id, val.name) // Function to prevent duplicate entries
+        console.log(trimArray)
+        storeFetch = removeShow(trimArray, val.id)
+        console.log(storeFetch)
         localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
       })
       $('#result-'+val.id+' div span.icon-save').click(function(){
@@ -498,7 +505,7 @@ function renderShow(showId){
         var trimArray = storeFetch.filter(function(obj) {
           return obj.id !== val.id
         })
-        storeFetch = add(trimArray, val.id, val.name) // Function to prevent duplicate entries
+        storeFetch = addShow(trimArray, val.id, val.name) // Function to prevent duplicate entries
         localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
       })
       $('#column-'+val.id).append('<div class="column" id="column-right-'+val.id+'">')
@@ -552,7 +559,7 @@ function renderShow(showId){
           //console.log(e.responseJSON.status)
           //console.log(e.responseJSON['error message'])
           $("#result-"+val.id+" .tv-background").empty()
-          $("#result-"+val.id).append('<img class="tv-background background-push" id="background_image_'+val.show.id+'" src="'+bgImage+'" />')
+          $("#result-"+val.id).append('<img class="tv-background background-push" id="background_image_'+val.id+'" src="'+bgImage+'" />')
         }
       })
     },error: function(e) {
