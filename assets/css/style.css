@@ -17,8 +17,11 @@
     display: flex;
 }
 .hero-body {
-    background:#242424;
+    background: url(/assets/img/tvshows.png);
+    background-position: center; 
     color:#fff;
+    height: 400px;
+    opacity: 0.4;
 }
 .title, .title a {
     color:#fff;
