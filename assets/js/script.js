@@ -245,6 +245,14 @@ function renderTV(searchQuery){
           clickSave(this, val.show.id, val.show.name)
         })
         $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
+        
+        var shortTSummary = decodeHtml(jQuery.trim(showSummary).substring(0, 200))
+          if (showSummary.length > 200) {
+            shortTSummary +=  "..."
+          }
+        if (showSummary){
+          $("#column-right-"+val.show.id).append('<p>'+shortTSummary+'</p>')      
+        }  
         if (showStatus){
           $("#column-right-"+val.show.id).append('<li>'+showStatus+'</li>')
         }
@@ -303,7 +311,9 @@ function renderTV(searchQuery){
             type: 'GET',
             url: 'https://www.googleapis.com/youtube/v3/search',
             data: {
-              key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
+              // switch key if reached max
+              key: 'AIzaSyBouMGeEVyYqBK-kOdxqvpFtRqAmefjXXo',
+              // key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
               q: searchQuery +' ('+showYear+')',
               part: 'snippet',
               maxResults: 1,
@@ -315,6 +325,7 @@ function renderTV(searchQuery){
             },
           })
         }
+      
         function embedVideo(data) {
           $('#youtube_wrapper').show()
           $('#youtube_embed .card-image iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
