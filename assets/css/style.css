@@ -17,7 +17,7 @@
     display: flex;
 }
 .hero-body {
-    background: url(/assets/img/tvshows.png);
+    background: url(../img/tvshows.png);
     background-position: center; 
     color:#fff;
     height: 400px;
