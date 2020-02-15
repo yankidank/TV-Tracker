@@ -572,6 +572,11 @@ $(document).ready(function(){
     searchQuery = $("#searchInput").val()
     renderTV(searchQuery)
   })
+  // Detect hover and click on tracked sidebar
+  $('.side_show_list .icon').click(function() {
+    $('.icon[data-side-bookmark=' + $(this).attr('data-side-bookmark') + ']').toggleClass("icon-remove")
+    $('.icon[data-side-bookmark=' + $(this).attr('data-side-bookmark') + ']').toggleClass("icon-save")
+  })
   var oldhash = ''
   var newhash = ''
   $( "body" ).click(function() {
@@ -580,7 +585,7 @@ $(document).ready(function(){
         newhash = window.location.hash.substring(1)
         if (oldhash !== newhash){
           renderShow(newhash)
-          $("html, body").animate({ scrollTop: 165 }, "slow")
+          $("html, body").animate({ scrollTop: 430 }, "slow")
         }
         oldhash = newhash
       }
