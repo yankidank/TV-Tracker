@@ -37,7 +37,11 @@ function addShow(array, transferID, transferTitle) {
   return array
 }
 function removeShow(array, transferID) {
-  return array
+  var arrayNew = array.filter(function(obj) {
+    return obj.id != transferID
+  })
+  //Object.keys(array).forEach((key) => (array[key] == null) && delete array[key]) // Find and remove empty objects
+  return arrayNew
 }
 function decodeHtml(str){
   var txt = document.createElement("textarea")
@@ -574,8 +578,23 @@ $(document).ready(function(){
   })
   // Detect hover and click on tracked sidebar
   $('.side_show_list .icon').click(function() {
+    var id = $(this).attr('data-side-bookmark').slice(14)
     $('.icon[data-side-bookmark=' + $(this).attr('data-side-bookmark') + ']').toggleClass("icon-remove")
     $('.icon[data-side-bookmark=' + $(this).attr('data-side-bookmark') + ']').toggleClass("icon-save")
+    $('[data-side-id="side_'+id+'"]').removeClass('new_track')
+    $('[data-side-id="side_'+id+'"]').addClass('remove_track')
+    setTimeout(function(){
+      $('[data-side-id="side_'+id+'"]').fadeOut( "slow", function() {
+        $('[data-side-id="side_'+id+'"]').remove()
+      });
+    }, 1000)
+    var trimArray = storeFetch.filter(function(obj) {
+      return obj.id !== id
+    })
+    //console.log(trimArray)
+    storeFetch = removeShow(trimArray, id)
+    console.log(storeFetch)
+    localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
   })
   var oldhash = ''
   var newhash = ''
