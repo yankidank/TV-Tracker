@@ -497,7 +497,7 @@ function renderShow(showId){
       omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
       $.getJSON(omdbURL, function(omdbreturn) {
         if (omdbreturn.imdbRating){
-          $("#column-right-"+val.id).append('<li>IMDB: '+omdbreturn.imdbRating+'</li>')
+          $("#column-right-"+val.id).append('<div class="imdb_score">IMDB: '+omdbreturn.imdbRating+'</div>')
         } else {
           //console.log('No imdb rating')
         }
