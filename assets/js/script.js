@@ -110,6 +110,35 @@ function renderSchedule(){
   })
 }
 function renderTV(searchQuery){
+  
+  function getVideo() {
+    $.ajax({
+      type: 'GET',
+      url: 'https://www.googleapis.com/youtube/v3/search',
+      data: {
+        // switch key if reached max
+        //key: 'AIzaSyBouMGeEVyYqBK-kOdxqvpFtRqAmefjXXo',
+        key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
+        q: searchQuery +' tv trailer',
+        part: 'snippet',
+        maxResults: 1,
+        type: 'video',
+        videoEmbeddable: true,
+      },
+      success: function(data){
+        embedVideo(data)
+      },
+    })
+  }
+  function embedVideo(data) {
+    console.log('video embed')
+    $('#youtube_wrapper').show()
+    $('#youtube_embed .card-image iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
+    var shortYtitle = decodeHtml(jQuery.trim(data.items[0].snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
+    $('h2.youtube_title').text(shortYtitle)
+    $('#youtube_description').text(data.items[0].snippet.description)
+  }
+  getVideo()
   var tvAPISearch = 'https://api.tvmaze.com/search/shows?q='+searchQuery
   $.ajax({
     type: 'GET',
@@ -309,34 +338,6 @@ function renderTV(searchQuery){
             $("#result-"+val.show.id).append('<img class="tv-background background-push" id="background_image_'+val.show.id+'" src="'+bgImage+'" />')
           }
         })
-        function getVideo() {
-          $.ajax({
-            type: 'GET',
-            url: 'https://www.googleapis.com/youtube/v3/search',
-            data: {
-              // switch key if reached max
-              key: 'AIzaSyBouMGeEVyYqBK-kOdxqvpFtRqAmefjXXo',
-              //key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
-              q: searchQuery +' ('+showYear+') tv trailer',
-              part: 'snippet',
-              maxResults: 1,
-              type: 'video',
-              videoEmbeddable: true,
-            },
-            success: function(data){
-              embedVideo(data)
-            },
-          })
-        }
-      
-        function embedVideo(data) {
-          $('#youtube_wrapper').show()
-          $('#youtube_embed .card-image iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
-          var shortYtitle = decodeHtml(jQuery.trim(data.items[0].snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
-          $('h2.youtube_title').text(shortYtitle)
-          $('#youtube_description').text(data.items[0].snippet.description)
-        }
-        getVideo()
       })
     },error: function(e) {
       console.log(e)
