@@ -17,6 +17,7 @@ var showTvdb
 var showImdb
 var showUpdated
 var showSummary
+var showYear
 var omdbAPI = '473a48b9'
 var index = 0
 var storePackage
@@ -118,6 +119,123 @@ function renderSchedule(){
     }
   })
 }
+function setTvmazeVariables(val, type){
+  console.log(val)
+  if (val.show){
+    val = val.show
+  }
+  if (val.image){
+    if (val.image.original){
+      showImg = val.image.original
+    } else {
+      showImg = './assets/img/poster.png'
+    }
+    if (val.image.medium) {
+      showImgMed = val.image.medium
+    } else {
+      showImgMed = './assets/img/poster.png'
+    }
+  } else {
+    //console.log('null images')
+    showImg = './assets/img/poster.png'
+    showImgMed = './assets/img/poster.png'
+  }
+  if (val.name) {
+    showTitle = val.name
+  } else {
+    //console.log('null name')
+    showTitle = ''
+  }
+  if (val.url) {
+    showURL = val.url
+  } else {
+    //console.log('null url')
+    showURL = '#'
+  }
+  if (val.status) {
+    showStatus = val.status
+  } else {
+    //console.log('null status')
+  }
+  if (val.runtime) {
+    showScheduleDays = val.schedule.days
+  } else {
+    //console.log('null schedule days')
+  }
+  if (val.runtime) {
+    showScheduleTime = val.schedule.time
+  } else {
+    //console.log('null schedule time')
+  }
+  if (val.runtime) {
+    showRuntime = val.runtime
+  } else {
+    //console.log('null runtime')
+  }
+  if (val.premiered) {
+    showPremiere = val.premiered
+  } else {
+    //console.log('null premiere')
+  }
+  if (val.rating) {
+    if (val.rating.average) {
+      showRatingAvg = val.rating.average
+    }
+  } else {
+    //console.log('null rating')
+  }
+  if (val.network) {
+    if (val.network.name) {
+      showNetwork = val.network.name
+    }
+  } else {
+    //console.log('null network name')
+  }
+  if (val.type) {
+    showType = val.type
+  } else {
+    //console.log('null type')
+  }
+  if (val.showGenres) {
+    showType = val.showGenres
+  } else {
+    //console.log('null genres')
+  }
+  if (val.externals) {
+    if (val.externals.tvrage) {
+      showTvrage = val.externals.tvrage
+    }
+  } else {
+    //console.log('null tvRage')
+  }
+  if (val.externals) {
+    if (val.externals.thetvdb) {
+      showTvdb = val.externals.thetvdb
+    }
+  } else {
+    //console.log('null tvdb')
+  }
+  if (val.externals) {
+    if (val.externals.imdb) {
+      showImdb = val.externals.imdb
+    }
+  } else {
+    //console.log('null imdb')
+  }
+  if (val.updated) {
+    showUpdated = val.updated
+  } else {
+    //console.log('null updated')
+  }
+  if (val.summary) {
+    showSummary = val.summary
+  } else {
+    //console.log('null summary')
+  }
+  if (showPremiere){
+    showYear = showPremiere.slice(0, -6);
+  }
+}
 function renderTV(searchQuery){
   function getVideo() {
     $.ajax({
@@ -157,117 +275,7 @@ function renderTV(searchQuery){
       tv.forEach(function(val) {
         //console.log(index)
         //console.log(val)
-        if (val.show.image){
-          if (val.show.image.original){
-            var showImg = val.show.image.original
-          } else {
-            var showImg = './assets/img/poster.png'
-          }
-          if (val.show.image.medium) {
-            var showImgMed = val.show.image.medium
-          } else {
-            var showImgMed = './assets/img/poster.png'
-          }
-        } else {
-          //console.log('null images')
-          var showImg = './assets/img/poster.png'
-          var showImgMed = './assets/img/poster.png'
-        }
-        if (val.show.name) {
-          showTitle = val.show.name
-        } else {
-          //console.log('null name')
-          showTitle = ''
-        }
-        if (val.show.url) {
-          showURL = val.show.url
-        } else {
-          //console.log('null url')
-          showURL = '#'
-        }
-        if (val.show.status) {
-          showStatus = val.show.status
-        } else {
-          //console.log('null status')
-        }
-        if (val.show.runtime) {
-          showScheduleDays = val.show.schedule.days
-        } else {
-          //console.log('null schedule days')
-        }
-        if (val.show.runtime) {
-          showScheduleTime = val.show.schedule.time
-        } else {
-          //console.log('null schedule time')
-        }
-        if (val.show.runtime) {
-          showRuntime = val.show.runtime
-        } else {
-          //console.log('null runtime')
-        }
-        if (val.show.premiered) {
-          showPremiere = val.show.premiered
-        } else {
-          //console.log('null premiere')
-        }
-        if (val.rating) {
-          if (val.rating.average) {
-            showRatingAvg = val.rating.average
-          }
-        } else {
-          //console.log('null rating')
-        }
-        if (val.show.network) {
-          if (val.show.network.name) {
-            showNetwork = val.show.network.name
-          }
-        } else {
-          //console.log('null network name')
-        }
-        if (val.show.type) {
-          showType = val.show.type
-        } else {
-          //console.log('null type')
-        }
-        if (val.show.showGenres) {
-          showType = val.show.showGenres
-        } else {
-          //console.log('null genres')
-        }
-        if (val.show.externals) {
-          if (val.show.externals.tvrage) {
-            showTvrage = val.show.externals.tvrage
-          }
-        } else {
-          //console.log('null tvRage')
-        }
-        if (val.show.externals) {
-          if (val.show.externals.thetvdb) {
-            showTvdb = val.show.externals.thetvdb
-          }
-        } else {
-          //console.log('null tvdb')
-        }
-        if (val.show.externals) {
-          if (val.show.externals.imdb) {
-            showImdb = val.show.externals.imdb
-          }
-        } else {
-          //console.log('null imdb')
-        }
-        if (val.show.updated) {
-          showUpdated = val.show.updated
-        } else {
-          //console.log('null updated')
-        }
-        if (val.show.summary) {
-          showSummary = val.show.summary
-        } else {
-          //console.log('null summary')
-        }
-        if (showPremiere){
-          var showYear = showPremiere.slice(0, -6);
-        }
+        setTvmazeVariables(val)
         $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')
         $("#result-"+val.show.id).hide()
         $("#result-"+val.show.id).fadeIn(600, 'swing')
@@ -357,117 +365,7 @@ function renderShow(showId){
       // Remove previous search results
       $("#tvColumn").empty()
       //console.log(val)
-      if (val.image){
-        if (val.image.original){
-          var showImg = val.image.original
-        } else {
-          var showImg = './assets/img/poster.png'
-        }
-        if (val.image.medium) {
-          var showImgMed = val.image.medium
-        } else {
-          var showImgMed = './assets/img/poster.png'
-        }
-      } else {
-        //console.log('null images')
-        var showImg = './assets/img/poster.png'
-        var showImgMed = './assets/img/poster.png'
-      }
-      if (val.name) {
-        showTitle = val.name
-      } else {
-        //console.log('null name')
-        showTitle = ''
-      }
-      if (val.url) {
-        showURL = val.url
-      } else {
-        //console.log('null url')
-        showURL = '#'
-      }
-      if (val.status) {
-        showStatus = val.status
-      } else {
-        //console.log('null status')
-      }
-      if (val.runtime) {
-        showScheduleDays = val.schedule.days
-      } else {
-        //console.log('null schedule days')
-      }
-      if (val.runtime) {
-        showScheduleTime = val.schedule.time
-      } else {
-        //console.log('null schedule time')
-      }
-      if (val.runtime) {
-        showRuntime = val.runtime
-      } else {
-        //console.log('null runtime')
-      }
-      if (val.premiered) {
-        showPremiere = val.premiered
-      } else {
-        //console.log('null premiere')
-      }
-      if (val.rating) {
-        if (val.rating.average) {
-          showRatingAvg = val.rating.average
-        }
-      } else {
-        //console.log('null rating')
-      }
-      if (val.network) {
-        if (val.network.name) {
-          showNetwork = val.network.name
-        }
-      } else {
-        //console.log('null network name')
-      }
-      if (val.type) {
-        showType = val.type
-      } else {
-        //console.log('null type')
-      }
-      if (val.showGenres) {
-        showType = val.showGenres
-      } else {
-        //console.log('null genres')
-      }
-      if (val.externals) {
-        if (val.externals.tvrage) {
-          showTvrage = val.externals.tvrage
-        }
-      } else {
-        //console.log('null tvRage')
-      }
-      if (val.externals) {
-        if (val.externals.thetvdb) {
-          showTvdb = val.externals.thetvdb
-        }
-      } else {
-        //console.log('null tvdb')
-      }
-      if (val.externals) {
-        if (val.externals.imdb) {
-          showImdb = val.externals.imdb
-        }
-      } else {
-        //console.log('null imdb')
-      }
-      if (val.updated) {
-        showUpdated = val.updated
-      } else {
-        //console.log('null updated')
-      }
-      if (val.summary) {
-        showSummary = val.summary
-      } else {
-        //console.log('null summary')
-      }
-      if (showPremiere){
-        var showYear = showPremiere.slice(0, -6);
-      }
+      setTvmazeVariables(val)
       $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.id+'">')
       $("#result-"+val.id).hide()
       $("#result-"+val.id).fadeIn(600, 'swing')
