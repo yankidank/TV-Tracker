@@ -276,8 +276,8 @@ function renderTV(searchQuery){
           clickSave(this, val.show.id, val.show.name)
         })
         $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
-        var shortTSummary = decodeHtml(jQuery.trim(showSummary).substring(0, 200))
-        if (showSummary.length > 200) {
+        var shortTSummary = decodeHtml(jQuery.trim(showSummary).substring(0, 250))
+        if (showSummary.length > 250) {
           shortTSummary +=  "..."
         }
         if (showSummary){
@@ -476,17 +476,20 @@ function renderShow(showId){
         clickSave(this, val.id, val.name)
       })
       $('#column-'+val.id).append('<div class="column" id="column-right-'+val.id+'">')
+      var shortTSummary = decodeHtml(jQuery.trim(showSummary).substring(0, 250))
+      if (showSummary.length > 250) {
+        shortTSummary +=  "..."
+      }
+      if (showSummary){
+        $("#column-right-"+val.id).append('<p>'+shortTSummary+'</p>')      
+      }
       if (showStatus){
-        $("#column-right-"+val.id).append('<li>'+showStatus+'</li>')
+        if (showStatus === 'Ended'){
+          $("#column-right-"+val.id).append('<div class="air_status color_red">Series Ended</div> ')
+        }
       }
-      if (showRatingAvg){
-        $("#column-right-"+val.id).append('<li>'+showRatingAvg+'</li>')
-      }
-      if (showScheduleTime){
-        $("#column-right-"+val.id).append('<li>'+timeConvert(showScheduleTime)+'</li>')
-      }
-      if (showNetwork){
-        $("#column-right-"+val.id).append('<li>'+showNetwork+'</li>')
+      if (showScheduleTime && showScheduleDays && showNetwork && showStatus === 'Running'){
+        $("#column-right-"+val.id).append('<div class="air_status"><span class="color_green">Series Airing</span> '+showScheduleDays+'s at '+timeConvert(showScheduleTime)+' on <strong>'+showNetwork+'</strong>')
       }
       $("#tvColumn").append('</div></div></div>')
       //omdb search for IMDB rating
