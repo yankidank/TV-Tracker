@@ -51,7 +51,7 @@ function decodeHtml(str){
 function clickSave(thisPass, id, name){
   $('#result-'+id+' div.show-star span.icon').toggleClass("icon-save")
   $('#result-'+id+' div.show-star span.icon').toggleClass("icon-remove")
-  $("#tracking_side").append('<div class="side_show_list" data-side-id="side_'+id+'"><i class="icon icon-remove sidebar_show_remove"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+id+'">'+name+'</a></span></div>')
+  $("#tracking_side").append('<div class="side_show_list" id="side_track_'+id+'" data-side-id="side_'+id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+id+'">'+name+'</a></span></div>')
   $('[data-side-id="side_'+id+'"]').removeClass('remove_track')
   $('[data-side-id="side_'+id+'"]').fadeIn( "medium", function() {
     $('[data-side-id="side_'+id+'"]').addClass('new_track')
@@ -110,7 +110,6 @@ function renderSchedule(){
   })
 }
 function renderTV(searchQuery){
-  
   function getVideo() {
     $.ajax({
       type: 'GET',
@@ -131,7 +130,6 @@ function renderTV(searchQuery){
     })
   }
   function embedVideo(data) {
-    console.log('video embed')
     $('#youtube_wrapper').show()
     $('#youtube_embed .card-image iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
     var shortYtitle = decodeHtml(jQuery.trim(data.items[0].snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
@@ -284,26 +282,22 @@ function renderTV(searchQuery){
         }
         if (showSummary){
           $("#column-right-"+val.show.id).append('<p>'+shortTSummary+'</p>')      
-        }  
+        }
         if (showStatus){
-          $("#column-right-"+val.show.id).append('<li>'+showStatus+'</li>')
+          if (showStatus === 'Ended'){
+            $("#column-right-"+val.show.id).append('<div class="air_status color_red">Series Ended</div> ')
+          }
         }
-        if (showRatingAvg){
-          $("#column-right-"+val.show.id).append('<li>'+showRatingAvg+'</li>')
-        }
-        if (showScheduleTime){
-          $("#column-right-"+val.show.id).append('<li>'+timeConvert(showScheduleTime)+'</li>')
-        }
-        if (showNetwork){
-          $("#column-right-"+val.show.id).append('<li>'+showNetwork+'</li>')
+        if (showScheduleTime && showScheduleDays && showNetwork && showStatus === 'Running'){
+          $("#column-right-"+val.show.id).append('<div class="air_status"><span class="color_green">Series Airing</span> '+showScheduleDays+'s at '+timeConvert(showScheduleTime)+' on <strong>'+showNetwork+'</strong>')
         }
         $("#tvColumn").append('</div></div></div>')
         //omdb search for IMDB rating
         var IMDBID = val.show.externals.imdb
         omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
         $.getJSON(omdbURL, function(omdbreturn) {
-          if (omdbreturn.imdbRating){
-            $("#column-right-"+val.show.id).append('<li>IMDB: '+omdbreturn.imdbRating+'</li>')
+          if (omdbreturn.imdbRating && omdbreturn.imdbRating != "N/A"){
+            $("#column-right-"+val.show.id).append('<div class="imdb_score">IMDB: '+omdbreturn.imdbRating+'</div>')
           } else {
             //console.log('No imdb rating')
           }

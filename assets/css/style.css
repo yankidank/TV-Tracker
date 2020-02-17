@@ -176,3 +176,15 @@
 #youtube_wrapper {
     display:none;
 }
+.air_status {
+    font-style: italic;
+    margin-top: 7px;
+    border-top: 1px dotted #cac7c7;
+    padding-top: 5px;
+}
+.color_red {
+    color:#861717
+}
+.color_green {
+    color:#0c8d46;
+}
