@@ -249,11 +249,10 @@ function renderTV(searchQuery){
           clickSave(this, val.show.id, val.show.name)
         })
         $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
-        
         var shortTSummary = decodeHtml(jQuery.trim(showSummary).substring(0, 200))
-          if (showSummary.length > 200) {
-            shortTSummary +=  "..."
-          }
+        if (showSummary.length > 200) {
+          shortTSummary +=  "..."
+        }
         if (showSummary){
           $("#column-right-"+val.show.id).append('<p>'+shortTSummary+'</p>')      
         }  
@@ -317,8 +316,8 @@ function renderTV(searchQuery){
             data: {
               // switch key if reached max
               key: 'AIzaSyBouMGeEVyYqBK-kOdxqvpFtRqAmefjXXo',
-              // key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
-              q: searchQuery +' ('+showYear+')',
+              //key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
+              q: searchQuery +' ('+showYear+') tv trailer',
               part: 'snippet',
               maxResults: 1,
               type: 'video',
@@ -579,6 +578,8 @@ $(document).ready(function(){
   // Detect hover and click on tracked sidebar
   $('.side_show_list .icon').click(function() {
     var id = $(this).attr('data-side-bookmark').slice(14)
+    $('#result-'+id+' div.show-star span.icon').toggleClass("icon-save")
+    $('#result-'+id+' div.show-star span.icon').toggleClass("icon-remove")
     $('.icon[data-side-bookmark=' + $(this).attr('data-side-bookmark') + ']').toggleClass("icon-remove")
     $('.icon[data-side-bookmark=' + $(this).attr('data-side-bookmark') + ']').toggleClass("icon-save")
     $('[data-side-id="side_'+id+'"]').removeClass('new_track')
@@ -591,9 +592,7 @@ $(document).ready(function(){
     var trimArray = storeFetch.filter(function(obj) {
       return obj.id !== id
     })
-    //console.log(trimArray)
     storeFetch = removeShow(trimArray, id)
-    console.log(storeFetch)
     localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
   })
   var oldhash = ''
