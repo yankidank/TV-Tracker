@@ -306,7 +306,7 @@ function renderTV(searchQuery){
         omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
         $.getJSON(omdbURL, function(omdbreturn) {
           if (omdbreturn.imdbRating && omdbreturn.imdbRating != "N/A"){
-            $("#column-right-"+val.show.id).append('<div class="imdb_score">IMDB: '+omdbreturn.imdbRating+'</div>')
+            $("#column-right-"+val.show.id).append('<div class="imdb_score"><a href="http://imdb.com/title/'+IMDBID+'" target="_blank">IMDB</a>: '+omdbreturn.imdbRating+'</div>')
           } else {
             //console.log('No imdb rating')
           }
@@ -506,7 +506,7 @@ function renderShow(showId){
       omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
       $.getJSON(omdbURL, function(omdbreturn) {
         if (omdbreturn.imdbRating){
-          $("#column-right-"+val.id).append('<div class="imdb_score">IMDB: '+omdbreturn.imdbRating+'</div>')
+          $("#column-right-"+val.id).append('<div class="imdb_score"><a href="http://imdb.com/title/'+IMDBID+'" target="_blank">IMDB</a>: '+omdbreturn.imdbRating+'</div>')
         } else {
           //console.log('No imdb rating')
         }
