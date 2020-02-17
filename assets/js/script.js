@@ -51,6 +51,7 @@ function decodeHtml(str){
 function clickSave(thisPass, id, name){
   $('#result-'+id+' div.show-star span.icon').toggleClass("icon-save")
   $('#result-'+id+' div.show-star span.icon').toggleClass("icon-remove")
+  $(".side_show_list_empty").remove()
   $("#tracking_side").append('<div class="side_show_list" id="side_track_'+id+'" data-side-id="side_'+id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+id+'">'+name+'</a></span></div>')
   $('[data-side-id="side_'+id+'"]').removeClass('remove_track')
   $('[data-side-id="side_'+id+'"]').fadeIn( "medium", function() {
@@ -81,28 +82,36 @@ function clickRemove(thisPass, id){
   $('#result-'+id+' div.show-star span.icon').toggleClass("icon-remove")
   $('[data-side-id="side_'+id+'"]').removeClass('new_track')
   $('[data-side-id="side_'+id+'"]').addClass('remove_track')
-  setTimeout(function(){
-  $('[data-side-id="side_'+id+'"]').fadeOut( "slow", function() {
-    $('[data-side-id="side_'+id+'"]').remove()
-  });
-  }, 1000)
   var trimArray = storeFetch.filter(function(obj) {
-  return obj.id !== id
+    return obj.id !== id
   })
   storeFetch = removeShow(trimArray, id)
   localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+  setTimeout(function(){
+  $('[data-side-id="side_'+id+'"]').fadeOut( "slow", function() {
+    $('[data-side-id="side_'+id+'"]').remove()
+    console.log(storeFetch)
+    console.log('storefetch?')
+    if (storeFetch.length === 0){
+      $("#tracking_side").append('<div class="side_show_list side_show_list_empty">You are not tracking any shows</div>')
+    }
+  })
+  }, 1000)
 }
 function renderSchedule(){
   var i
   for (i = 0; i < storeFetch.length; i++) {
     $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+storeFetch[i].id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].id+'">'+storeFetch[i].title+'</a></span></div>')
   }
+  if (storeFetch.length === 0){
+    $("#tracking_side").append('<div class="side_show_list side_show_list_empty">You are not tracking any shows</div>')
+  }
   //console.log(storeFetch)
   var found = {}
   $('[data-side-id]').each(function(){
     var $this = $(this)
     if(found[$this.data('side-id')]){
-      $this.remove()
+      $this.remove() // This section is breaking the save icon toggle
     }
     else{
       found[$this.data('side-id')] = true
@@ -582,16 +591,21 @@ $(document).ready(function(){
     $('.icon[data-side-bookmark=' + $(this).attr('data-side-bookmark') + ']').toggleClass("icon-save")
     $('[data-side-id="side_'+id+'"]').removeClass('new_track')
     $('[data-side-id="side_'+id+'"]').addClass('remove_track')
-    setTimeout(function(){
-      $('[data-side-id="side_'+id+'"]').fadeOut( "slow", function() {
-        $('[data-side-id="side_'+id+'"]').remove()
-      });
-    }, 1000)
     var trimArray = storeFetch.filter(function(obj) {
       return obj.id !== id
     })
     storeFetch = removeShow(trimArray, id)
     localStorage.setItem('TVtracker', JSON.stringify(storeFetch))
+    setTimeout(function(){
+      $('[data-side-id="side_'+id+'"]').fadeOut( "slow", function() {
+        $('[data-side-id="side_'+id+'"]').remove()
+        console.log(storeFetch)
+        console.log('storefetch?')
+        if (storeFetch.length === 0){
+          $("#tracking_side").append('<div class="side_show_list side_show_list_empty">You are not tracking any shows</div>')
+        }
+      })
+    }, 1000)
   })
   var oldhash = ''
   var newhash = ''
