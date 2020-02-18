@@ -272,8 +272,12 @@ function showSearchTemplate(val){
   IMDBID = val.externals.imdb
   omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
   $.getJSON(omdbURL, function(omdbreturn) {
-    if (omdbreturn.imdbRating && omdbreturn.imdbRating != "N/A"){
-      $("#column-right-"+val.id).append('<div class="imdb_score"><a href="http://imdb.com/title/'+IMDBID+'" target="_blank">IMDB</a>: '+omdbreturn.imdbRating+'</div>')
+    if (omdbreturn.imdbRating < 4.0){
+      $("#column-right-"+val.id).append('<div class="imdb_score">IMDB: <span class="low_score">'+omdbreturn.imdbRating+'</span></div>')
+    } else if (4.0 <= omdbreturn.imdbRating && omdbreturn.imdbRating < 7.0){
+      $("#column-right-"+val.id).append('<div class="imdb_score">IMDB: <span class="medium_score">'+omdbreturn.imdbRating+'</span></div>')
+    } else if (omdbreturn.imdbRating >= 7){
+      $("#column-right-"+val.id).append('<div class="imdb_score">IMDB: <span class="high_score">'+omdbreturn.imdbRating+'<span></div>')        
     } else {
       //console.log('No imdb rating')
     }

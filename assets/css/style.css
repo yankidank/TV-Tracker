@@ -193,3 +193,18 @@
 .color_green {
     color:#0c8d46;
 }
+
+.low_score {
+    color: #861717;
+    font-weight: bold;
+}
+
+.medium_score {
+    color: #e0b047;
+    font-weight: bold;
+}
+
+.high_score {
+    color:#0c8d46;
+    font-weight: bold;
+}
