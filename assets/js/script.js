@@ -19,14 +19,22 @@ var showUpdated
 var showSummary
 var showYear
 var shortTSummary
+var shortYtitle
+var tvAPISearch 
 var IMDBID
 var omdbAPI = '473a48b9'
 var index = 0
 var storePackage
 var hash
+var id
 var fanartAPI = 'b6854576836477401d01b1807776a52c'
 var fanartAPISearch
 var bgImage
+var arrayNew
+var keycode
+var txt
+var found = {}
+var trimArray
 var storeFetch = []
 storeFetch = localStorage.getItem('TVtracker')
 storeFetch = JSON.parse(storeFetch)
@@ -40,14 +48,14 @@ function addShow(array, transferID, transferTitle) {
   return array
 }
 function removeShow(array, transferID) {
-  var arrayNew = array.filter(function(obj) {
+  arrayNew = array.filter(function(obj) {
     return obj.id != transferID
   })
   //Object.keys(array).forEach((key) => (array[key] == null) && delete array[key]) // Find and remove empty objects
   return arrayNew
 }
 function decodeHtml(str){
-  var txt = document.createElement("textarea")
+  txt = document.createElement("textarea")
   txt.innerHTML = str
   return txt.value
 }
@@ -64,7 +72,6 @@ function clickSave(thisPass, id, name){
     $('[data-side-id="side_'+id+'"]').removeClass('new_track')
   }, 1000)
   // Check if the sidebar item already exists
-  var found = {}
   $('[data-side-id]').each(function(){
     var $thisPass = $(thisPass)
     if(found[$thisPass.data('side-id')]){
@@ -74,7 +81,7 @@ function clickSave(thisPass, id, name){
       found[$thisPass.data('side-id')] = true;   
     }
   })
-  var trimArray = storeFetch.filter(function(obj) {
+  trimArray = storeFetch.filter(function(obj) {
     return obj.id !== id
   })
   storeFetch = addShow(trimArray, id, name) // Function to prevent duplicate entries
@@ -102,15 +109,13 @@ function clickRemove(thisPass, id){
   }, 1000)
 }
 function renderSchedule(){
-  var i
-  for (i = 0; i < storeFetch.length; i++) {
+  for (var i, i = 0; i < storeFetch.length; i++) {
     $("#tracking_side").append('<div class="side_show_list" id="side_track_'+storeFetch[i].id+'" data-side-id="side_'+storeFetch[i].id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+storeFetch[i].id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+storeFetch[i].id+'">'+storeFetch[i].title+'</a></span></div>')
   }
   if (storeFetch.length === 0){
     $("#tracking_side").append('<div class="side_show_list side_show_list_empty">You are not tracking any shows</div>')
   }
   //console.log(storeFetch)
-  var found = {}
   $('[data-side-id]').each(function(){
     var $this = $(this)
     if(found[$this.data('side-id')]){
@@ -238,8 +243,8 @@ function showSearchTemplate(val){
   $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.id+'">')
   $("#result-"+val.id).hide()
   $("#result-"+val.id).fadeIn(600, 'swing')
-  $('#result-'+val.id).append('<div class="column poster"><img src="'+showImgMed+'" /></div>')
-  $('#result-'+val.id).append('<div class="column details" id="column-'+val.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
+  $('#result-'+val.id).append('<div class="poster"><img src="'+showImgMed+'" /></div>')
+  $('#result-'+val.id).append('<div class="details" id="column-'+val.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
   if (storeFetch.find(obj => obj.id == val.id)){
     $('#result-'+val.id).append('<div class="show-star show-remove" data-id="'+val.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
   } else {
@@ -251,7 +256,7 @@ function showSearchTemplate(val){
   $('#result-'+val.id+' div span.icon-save').click(function(){
     clickSave(this, val.id, val.name)
   })
-  $('#column-'+val.id).append('<div class="column" id="column-right-'+val.id+'">')
+  $('#column-'+val.id).append('<div class="summary" id="column-right-'+val.id+'">')
   shortTSummary = decodeHtml(jQuery.trim(showSummary).substring(0, 250))
   if (showSummary.length > 250) {
     shortTSummary +=  "..."
@@ -273,11 +278,11 @@ function showSearchTemplate(val){
   omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
   $.getJSON(omdbURL, function(omdbreturn) {
     if (omdbreturn.imdbRating < 4.0){
-      $("#column-right-"+val.id).append('<div class="imdb_score">IMDB: <span class="low_score">'+omdbreturn.imdbRating+'</span></div>')
+      $("#column-right-"+val.id).append('<div class="imdb_score"><a href="https://www.imdb.com/title/'+IMDBID+'/" target="_blank">IMDB</a>: <span class="low_score">'+omdbreturn.imdbRating+'</span></div>')
     } else if (4.0 <= omdbreturn.imdbRating && omdbreturn.imdbRating < 7.0){
-      $("#column-right-"+val.id).append('<div class="imdb_score">IMDB: <span class="medium_score">'+omdbreturn.imdbRating+'</span></div>')
+      $("#column-right-"+val.id).append('<div class="imdb_score"><a href="https://www.imdb.com/title/'+IMDBID+'/" target="_blank">IMDB</a>: <span class="medium_score">'+omdbreturn.imdbRating+'</span></div>')
     } else if (omdbreturn.imdbRating >= 7){
-      $("#column-right-"+val.id).append('<div class="imdb_score">IMDB: <span class="high_score">'+omdbreturn.imdbRating+'<span></div>')        
+      $("#column-right-"+val.id).append('<div class="imdb_score"><a href="https://www.imdb.com/title/'+IMDBID+'/" target="_blank">IMDB</a>: <span class="high_score">'+omdbreturn.imdbRating+'<span></div>')        
     } else {
       //console.log('No imdb rating')
     }
@@ -338,12 +343,12 @@ function renderTV(searchQuery){
   function embedVideo(data) {
     $('#youtube_wrapper').show()
     $('#youtube_embed .card-image iframe').attr('src', 'https://www.youtube.com/embed/' + data.items[0].id.videoId)
-    var shortYtitle = decodeHtml(jQuery.trim(data.items[0].snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
+    shortYtitle = decodeHtml(jQuery.trim(data.items[0].snippet.title)+ "...").substring(0, 31).split(" ").slice(0, -1).join(" ")
     $('h2.youtube_title').text(shortYtitle)
     $('#youtube_description').text(data.items[0].snippet.description)
   }
   getVideo()
-  var tvAPISearch = 'https://api.tvmaze.com/search/shows?q='+searchQuery
+  tvAPISearch = 'https://api.tvmaze.com/search/shows?q='+searchQuery
   $.ajax({
     type: 'GET',
     url: tvAPISearch,
@@ -364,7 +369,7 @@ function renderTV(searchQuery){
   })
 }
 function renderShow(showId){
-  var tvAPISearch = 'https://api.tvmaze.com/shows/'+showId
+  tvAPISearch = 'https://api.tvmaze.com/shows/'+showId
   $.ajax({
     type: 'GET',
     url: tvAPISearch,
@@ -406,7 +411,7 @@ $(document).ready(function(){
   renderSchedule() // Display tracked show data
   // Detect enter key press
   $('#searchInput').keypress(function(event){
-    var keycode = (event.keyCode ? event.keyCode : event.which);
+    keycode = (event.keyCode ? event.keyCode : event.which)
     if(keycode == '13'){
       searchQuery = $("#searchInput").val()
       renderTV(searchQuery)	
@@ -419,14 +424,14 @@ $(document).ready(function(){
   })
   // Detect hover and click on tracked sidebar
   $('.side_show_list .icon').click(function() {
-    var id = $(this).attr('data-side-bookmark').slice(14)
+    id = $(this).attr('data-side-bookmark').slice(14)
     $('#result-'+id+' div.show-star span.icon').toggleClass("icon-save")
     $('#result-'+id+' div.show-star span.icon').toggleClass("icon-remove")
     $('.icon[data-side-bookmark=' + $(this).attr('data-side-bookmark') + ']').toggleClass("icon-remove")
     $('.icon[data-side-bookmark=' + $(this).attr('data-side-bookmark') + ']').toggleClass("icon-save")
     $('[data-side-id="side_'+id+'"]').removeClass('new_track')
     $('[data-side-id="side_'+id+'"]').addClass('remove_track')
-    var trimArray = storeFetch.filter(function(obj) {
+    trimArray = storeFetch.filter(function(obj) {
       return obj.id !== id
     })
     storeFetch = removeShow(trimArray, id)
@@ -434,8 +439,6 @@ $(document).ready(function(){
     setTimeout(function(){
       $('[data-side-id="side_'+id+'"]').fadeOut( "slow", function() {
         $('[data-side-id="side_'+id+'"]').remove()
-        console.log(storeFetch)
-        console.log('storefetch?')
         if (storeFetch.length === 0){
           $("#tracking_side").append('<div class="side_show_list side_show_list_empty">You are not tracking any shows</div>')
         }
