@@ -53,6 +53,11 @@
     -o-transition: all 1.5s ease;
     transition: all 1.5s ease;
 }
+.side_show_list_empty {
+    font-style: italic;
+    padding: 25px;
+    text-align: center;
+}
 .notification {
     padding:1.5rem 1.5rem 1.5rem 1.5rem;
     background:#e8e8e840;
