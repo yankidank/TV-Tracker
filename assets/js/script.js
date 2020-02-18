@@ -18,6 +18,8 @@ var showImdb
 var showUpdated
 var showSummary
 var showYear
+var shortTSummary
+var IMDBID
 var omdbAPI = '473a48b9'
 var index = 0
 var storePackage
@@ -120,10 +122,6 @@ function renderSchedule(){
   })
 }
 function setTvmazeVariables(val, type){
-  console.log(val)
-  if (val.show){
-    val = val.show
-  }
   if (val.image){
     if (val.image.original){
       showImg = val.image.original
@@ -236,6 +234,83 @@ function setTvmazeVariables(val, type){
     showYear = showPremiere.slice(0, -6);
   }
 }
+function showSearchTemplate(val){
+  $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.id+'">')
+  $("#result-"+val.id).hide()
+  $("#result-"+val.id).fadeIn(600, 'swing')
+  $('#result-'+val.id).append('<div class="column poster"><img src="'+showImgMed+'" /></div>')
+  $('#result-'+val.id).append('<div class="column details" id="column-'+val.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
+  if (storeFetch.find(obj => obj.id == val.id)){
+    $('#result-'+val.id).append('<div class="show-star show-remove" data-id="'+val.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
+  } else {
+    $('#result-'+val.id).append('<div class="show-star show-add" data-id="'+val.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
+  }
+  $('#result-'+val.id+' div span.icon-remove').click(function(){
+    clickRemove(this, val.id)
+  })
+  $('#result-'+val.id+' div span.icon-save').click(function(){
+    clickSave(this, val.id, val.name)
+  })
+  $('#column-'+val.id).append('<div class="column" id="column-right-'+val.id+'">')
+  shortTSummary = decodeHtml(jQuery.trim(showSummary).substring(0, 250))
+  if (showSummary.length > 250) {
+    shortTSummary +=  "..."
+  }
+  if (showSummary){
+    $("#column-right-"+val.id).append('<p>'+shortTSummary+'</p>')      
+  }
+  if (showStatus){
+    if (showStatus === 'Ended'){
+      $("#column-right-"+val.id).append('<div class="air_status color_red">Series Ended</div> ')
+    }
+  }
+  if (showScheduleTime && showScheduleDays && showNetwork && showStatus === 'Running'){
+    $("#column-right-"+val.id).append('<div class="air_status"><span class="color_green">Series Airing</span> '+showScheduleDays+'s at '+timeConvert(showScheduleTime)+' on <strong>'+showNetwork+'</strong>')
+  }
+  $("#tvColumn").append('</div></div></div>')
+  //omdb search for IMDB rating
+  IMDBID = val.externals.imdb
+  omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
+  $.getJSON(omdbURL, function(omdbreturn) {
+    if (omdbreturn.imdbRating && omdbreturn.imdbRating != "N/A"){
+      $("#column-right-"+val.id).append('<div class="imdb_score"><a href="http://imdb.com/title/'+IMDBID+'" target="_blank">IMDB</a>: '+omdbreturn.imdbRating+'</div>')
+    } else {
+      //console.log('No imdb rating')
+    }
+  })
+}
+function showFanart(val){
+  fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
+  $.ajax({
+    type: 'GET',
+    url: fanartAPISearch,
+    success: function(fanart) {
+      //console.log(fanart)
+      if (fanart.hdclearart && fanart.hdclearart[0].url){
+        bgImage = fanart.hdclearart[0].url
+      } else if (fanart.showbackground && fanart.showbackground[0].url){
+        bgImage = fanart.showbackground[0].url
+      } else if (fanart.tvposter && fanart.tvposter[0].url){
+        bgImage = fanart.tvposter[0].url
+      } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
+        bgImage = fanart.hdtvlogo[0].url
+      } else {
+        bgImage = showImg
+      }
+      //console.log(bgImage)
+      //console.log(val.id)
+      $("#result-"+val.id+" .tv-background").empty()
+      $("#result-"+val.id).append('<img class="tv-background" id="background_image_'+val.id+'" src="'+bgImage+'" />')
+    },
+    error: function(e) {
+      bgImage = showImg
+      //console.log(e.responseJSON.status)
+      //console.log(e.responseJSON['error message'])
+      $("#result-"+val.id+" .tv-background").empty()
+      $("#result-"+val.id).append('<img class="tv-background background-push" id="background_image_'+val.id+'" src="'+bgImage+'" />')
+    }
+  })
+}
 function renderTV(searchQuery){
   function getVideo() {
     $.ajax({
@@ -275,80 +350,9 @@ function renderTV(searchQuery){
       tv.forEach(function(val) {
         //console.log(index)
         //console.log(val)
-        setTvmazeVariables(val)
-        $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.show.id+'">')
-        $("#result-"+val.show.id).hide()
-        $("#result-"+val.show.id).fadeIn(600, 'swing')
-        $('#result-'+val.show.id).append('<div class="column poster"><img src="'+showImgMed+'" /></div>')
-        $('#result-'+val.show.id).append('<div class="column details" id="column-'+val.show.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
-        if (storeFetch.find(obj => obj.id == val.show.id)){
-          $('#result-'+val.show.id).append('<div class="show-star show-remove" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
-        } else {
-          $('#result-'+val.show.id).append('<div class="show-star show-add" data-id="'+val.show.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
-        }
-        $('#result-'+val.show.id+' div span.icon-remove').click(function(){
-          clickRemove(this, val.show.id)
-        })
-        $('#result-'+val.show.id+' div span.icon-save').click(function(){
-          clickSave(this, val.show.id, val.show.name)
-        })
-        $('#column-'+val.show.id).append('<div class="column" id="column-right-'+val.show.id+'">')
-        var shortTSummary = decodeHtml(jQuery.trim(showSummary).substring(0, 250))
-        if (showSummary.length > 250) {
-          shortTSummary +=  "..."
-        }
-        if (showSummary){
-          $("#column-right-"+val.show.id).append('<p>'+shortTSummary+'</p>')      
-        }
-        if (showStatus){
-          if (showStatus === 'Ended'){
-            $("#column-right-"+val.show.id).append('<div class="air_status color_red">Series Ended</div> ')
-          }
-        }
-        if (showScheduleTime && showScheduleDays && showNetwork && showStatus === 'Running'){
-          $("#column-right-"+val.show.id).append('<div class="air_status"><span class="color_green">Series Airing</span> '+showScheduleDays+'s at '+timeConvert(showScheduleTime)+' on <strong>'+showNetwork+'</strong>')
-        }
-        $("#tvColumn").append('</div></div></div>')
-        //omdb search for IMDB rating
-        var IMDBID = val.show.externals.imdb
-        omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
-        $.getJSON(omdbURL, function(omdbreturn) {
-          if (omdbreturn.imdbRating && omdbreturn.imdbRating != "N/A"){
-            $("#column-right-"+val.show.id).append('<div class="imdb_score"><a href="http://imdb.com/title/'+IMDBID+'" target="_blank">IMDB</a>: '+omdbreturn.imdbRating+'</div>')
-          } else {
-            //console.log('No imdb rating')
-          }
-        })
-        fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
-        $.ajax({
-          type: 'GET',
-          url: fanartAPISearch,
-          success: function(fanart) {
-            //console.log(fanart)
-            if (fanart.hdclearart && fanart.hdclearart[0].url){
-              bgImage = fanart.hdclearart[0].url
-            } else if (fanart.showbackground && fanart.showbackground[0].url){
-              bgImage = fanart.showbackground[0].url
-            } else if (fanart.tvposter && fanart.tvposter[0].url){
-              bgImage = fanart.tvposter[0].url
-            } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
-              bgImage = fanart.hdtvlogo[0].url
-            } else {
-              bgImage = showImg
-            }
-            //console.log(bgImage)
-            //console.log(val.show.id)
-            $("#result-"+val.show.id+" .tv-background").empty()
-            $("#result-"+val.show.id).append('<img class="tv-background" id="background_image_'+val.show.id+'" src="'+bgImage+'" />')
-          },
-          error: function(e) {
-            bgImage = showImg
-            //console.log(e.responseJSON.status)
-            //console.log(e.responseJSON['error message'])
-            $("#result-"+val.show.id+" .tv-background").empty()
-            $("#result-"+val.show.id).append('<img class="tv-background background-push" id="background_image_'+val.show.id+'" src="'+bgImage+'" />')
-          }
-        })
+        setTvmazeVariables(val.show)
+        showSearchTemplate(val.show)
+        showFanart(val.show)
       })
     },error: function(e) {
       console.log(e)
@@ -366,79 +370,8 @@ function renderShow(showId){
       $("#tvColumn").empty()
       //console.log(val)
       setTvmazeVariables(val)
-      $("#tvColumn").append('<div class="notification tv-result" id="result-'+val.id+'">')
-      $("#result-"+val.id).hide()
-      $("#result-"+val.id).fadeIn(600, 'swing')
-      $('#result-'+val.id).append('<div class="column poster"><img src="'+showImgMed+'" /></div>')
-      $('#result-'+val.id).append('<div class="column details" id="column-'+val.id+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ showURL +'">'+ showTitle +' ('+showYear+')</a></p>')
-      if (storeFetch.find(obj => obj.id == val.id)){
-        $('#result-'+val.id).append('<div class="show-star show-remove" data-id="'+val.id+'" data-title="'+ showTitle +'"><span class="icon icon-remove"></span></div>')
-      } else {
-        $('#result-'+val.id).append('<div class="show-star show-add" data-id="'+val.id+'" data-title="'+ showTitle +'"><span class="icon icon-save"></span></div>')
-      }
-      $('#result-'+val.id+' div span.icon-remove').click(function(){
-        clickRemove(this, val.id)
-      })
-      $('#result-'+val.id+' div span.icon-save').click(function(){
-        clickSave(this, val.id, val.name)
-      })
-      $('#column-'+val.id).append('<div class="column" id="column-right-'+val.id+'">')
-      var shortTSummary = decodeHtml(jQuery.trim(showSummary).substring(0, 250))
-      if (showSummary.length > 250) {
-        shortTSummary +=  "..."
-      }
-      if (showSummary){
-        $("#column-right-"+val.id).append('<p>'+shortTSummary+'</p>')      
-      }
-      if (showStatus){
-        if (showStatus === 'Ended'){
-          $("#column-right-"+val.id).append('<div class="air_status color_red">Series Ended</div> ')
-        }
-      }
-      if (showScheduleTime && showScheduleDays && showNetwork && showStatus === 'Running'){
-        $("#column-right-"+val.id).append('<div class="air_status"><span class="color_green">Series Airing</span> '+showScheduleDays+'s at '+timeConvert(showScheduleTime)+' on <strong>'+showNetwork+'</strong>')
-      }
-      $("#tvColumn").append('</div></div></div>')
-      //omdb search for IMDB rating
-      var IMDBID = val.externals.imdb
-      omdbURL = 'https://www.omdbapi.com/?i='+IMDBID+'&apikey='+omdbAPI
-      $.getJSON(omdbURL, function(omdbreturn) {
-        if (omdbreturn.imdbRating){
-          $("#column-right-"+val.id).append('<div class="imdb_score"><a href="http://imdb.com/title/'+IMDBID+'" target="_blank">IMDB</a>: '+omdbreturn.imdbRating+'</div>')
-        } else {
-          //console.log('No imdb rating')
-        }
-      })
-      fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
-      $.ajax({
-        type: 'GET',
-        url: fanartAPISearch,
-        success: function(fanart) {
-          //console.log(fanart)
-          if (fanart.hdclearart && fanart.hdclearart[0].url){
-            bgImage = fanart.hdclearart[0].url
-          } else if (fanart.showbackground && fanart.showbackground[0].url){
-            bgImage = fanart.showbackground[0].url
-          } else if (fanart.tvposter && fanart.tvposter[0].url){
-            bgImage = fanart.tvposter[0].url
-          } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
-            bgImage = fanart.hdtvlogo[0].url
-          } else {
-            bgImage = showImg
-          }
-          //console.log(bgImage)
-          //console.log(val.id)
-          $("#result-"+val.id+" .tv-background").empty()
-          $("#result-"+val.id).append('<img class="tv-background" id="background_image_'+val.id+'" src="'+bgImage+'" />')
-        },
-        error: function(e) {
-          bgImage = showImg
-          //console.log(e.responseJSON.status)
-          //console.log(e.responseJSON['error message'])
-          $("#result-"+val.id+" .tv-background").empty()
-          $("#result-"+val.id).append('<img class="tv-background background-push" id="background_image_'+val.id+'" src="'+bgImage+'" />')
-        }
-      })
+      showSearchTemplate(val)
+      showFanart(val)
     },error: function(e) {
       console.log(e)
     }
