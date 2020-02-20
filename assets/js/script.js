@@ -6,6 +6,14 @@ var showURL
 var showStatus
 var showScheduleDays
 var showScheduleTime
+var storeFetchIDarray = []
+var combineSchedule = []
+var scheduleIDarray = []
+var scheduleMatchID = []
+var scheduleIDfiltered
+var combineScheduleParsed
+var combineScheduleMatch = []
+var dayTrack = 0
 var showRuntime
 var showPremiere
 var showRatingAvg
@@ -20,6 +28,7 @@ var showSummary
 var showYear
 var shortTSummary
 var shortYtitle
+var storeDatesArr
 var tvAPISearch 
 var IMDBID
 var omdbAPI = '473a48b9'
@@ -126,7 +135,93 @@ function renderSchedule(){
     }
   })
 }
-function setTvmazeVariables(val, type){
+function setDates(){ // Retrieves the schedule for the upcoming week
+  // YYYY-MM-DD formatted dates using moment.js
+  var scheduleDate1 = new Date()
+  scheduleDate1 = moment(scheduleDate1).format().substr(0, 10)
+  var scheduleDate2 = moment(scheduleDate1).add(1, 'day').format().substr(0, 10)
+  var scheduleDate3 = moment(scheduleDate1).add(2, 'day').format().substr(0, 10)
+  var scheduleDate4 = moment(scheduleDate1).add(3, 'day').format().substr(0, 10)
+  var scheduleDate5 = moment(scheduleDate1).add(4, 'day').format().substr(0, 10)
+  var scheduleDate6 = moment(scheduleDate1).add(5, 'day').format().substr(0, 10)
+  var scheduleDate7 = moment(scheduleDate1).add(6, 'day').format().substr(0, 10)
+  var scheduleDatesArr = [
+    scheduleDate1,
+    scheduleDate2,
+    scheduleDate3,
+    scheduleDate4,
+    scheduleDate5,
+    scheduleDate6,
+    scheduleDate7
+  ]
+  for(let i = 0; i < scheduleDatesArr.length; i++){
+    storeDatesArr = localStorage.getItem('TV_Day_'+scheduleDatesArr[i])
+    storeDatesArr = JSON.parse(storeDatesArr)
+    if (!storeDatesArr){
+      // Get the schedule for each day
+      $.ajax({
+        type: 'GET',
+        url: 'https://api.tvmaze.com/schedule?country=US&date='+scheduleDatesArr[i],
+        dataType: "json",
+        success: function(schedule) {
+          // Add schedule to localStorage
+          localStorage.setItem('TV_Day_'+scheduleDatesArr[i], JSON.stringify(schedule))
+        },error: function(e) {
+          console.log(e)
+        }
+      })
+    }
+    var tempCombine = localStorage.getItem('TV_Day_'+scheduleDatesArr[i])
+    combineSchedule = combineSchedule.concat(tempCombine)
+  }
+}
+Array.prototype.diff = function(arr2) {
+  var ret = []
+  for(var i in this) {   
+    if(arr2.indexOf(this[i]) > -1){
+      ret.push(this[i])
+    }
+  }
+  return ret
+}
+function renderHome(){
+  $("#tvColumn").empty()
+  setDates()
+  // Retrieve combined schedule info
+  $.each(combineSchedule, function( index, value ) {
+    dayTrack++
+    // Convert value from string to object
+    combineScheduleParsed = JSON.parse(value)
+    // Check localStorage schedule for tracked show IDs
+    for(let i = 0; i < combineScheduleParsed.length; i++){
+      // Combine all schedule IDs in an array
+      scheduleIDarray.push(combineScheduleParsed[i].show.id)
+    }
+    combineScheduleMatch.push(combineScheduleParsed)
+  })
+  // Filter out schedule duplicates from localStorage
+  scheduleIDfiltered = scheduleIDarray.filter(function(item, pos){
+    return scheduleIDarray.indexOf(item)== pos; 
+  })
+  // Get tracked IDs from storeFetch
+  for(let i = 0; i < storeFetch.length; i++){
+    storeFetchIDarray.push(storeFetch[i].id)
+  }
+  // Filter out repeating IDs
+  scheduleMatchID = scheduleIDfiltered.diff(storeFetchIDarray)
+  /////////////// TODO ///////////////
+  // Find shows that you track that are in the schedule
+  $.each(combineScheduleMatch, function( indexout, arrout ) {
+    //console.log(arrout)
+    $.each(arrout, function( indexin, arrin ) {
+      //console.log(arrin)
+    })
+  })
+  /////////////// TODO ///////////////
+  // If no scheduled items appear, or if you aren't tracking anything,
+  // display a homepage with popular shows in the search result format
+}
+function setTvmazeVariables(val){
   if (val.image){
     if (val.image.original){
       showImg = val.image.original
@@ -406,6 +501,7 @@ function timeConvert(APItime){
   }
   return itemTwelve + AMPM
 }
+renderHome()
 $(document).ready(function(){
   removeHash()
   renderSchedule() // Display tracked show data
