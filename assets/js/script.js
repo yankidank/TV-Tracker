@@ -209,11 +209,11 @@ function renderHome(){
   }
   // Return the tracked shows airing this week
   combineScheduleMatch.forEach((day)=>{
-    const endResult = day.filter((singleShow,i)=>{
+    const endResult = day.filter((singleShow,dow)=>{
       return storeFetchIDarray.includes(singleShow.show.id)
     })
-    //console.log(endResult)
     endResult.forEach(function(scheduledItem, i){
+      console.log(i)
       var scheduleEpName = scheduledItem.name
       var scheduleURL = scheduledItem.url
       var scheduleSeason = scheduledItem.season
@@ -230,12 +230,19 @@ function renderHome(){
       var scheduleShowNetwork = scheduledItem.show.network.name
       var scheduleShowImgMed = scheduledItem.show.image.medium
       var scheduleShowImgOrig = scheduledItem.show.image.original
+      var dow = moment(scheduleAirdate).format('dddd')
+      if($("#dow-" + dow).length == 0) {
+        $('#tvColumn').append('<h2 id="dow-'+dow+'">'+dow+'</h2>')
+      }
       $('#tvColumn').append('<div class="notification tv-result" id="schedule-'+scheduleShowID+'"><div class="poster"><img src="'+scheduleShowImgOrig+'" /></div><div class="details" id="column-'+scheduleShowID+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ scheduleShowURL +'">'+ scheduleShowName +'</a></p><div class="summary" id="column-right-'+scheduleShowID+'"><p class="ep_title"><a href="'+scheduleURL+'" target="_blank">'+scheduleEpName+'</a></p><p style="font-style:italic;">Season '+scheduleSeason+', Episode '+scheduleEpNumber+'</p><p>'+scheduleSummary+'</p><div class="air_status">Airs '+scheduleAirdate+' at '+scheduleAirtime+' on '+scheduleShowNetwork+'</div></div></div><div class="show-star show-remove" data-id="'+scheduleShowID+'" data-title="'+scheduleShowName+'"><span class="icon icon-remove"></span></div></div>')
     })
   })
-  /////////////// TODO ///////////////
-  // If no scheduled items appear, or if you aren't tracking anything,
-  // display a homepage with popular shows in the search result format
+  if ($('#tvColumn').is(':empty')){
+    // If no scheduled items appear, or if you aren't tracking anything,
+    // display a homepage with popular shows in the search result format
+    $('#tvColumn').append('<h2>This week\'s schedule</h2> ')
+    $('#tvColumn').append('<div class="notification tv-result">No tracked shows are airing this week</div>')
+  }  
 }
 function setTvmazeVariables(val){
   if (val.image){

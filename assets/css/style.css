@@ -34,7 +34,13 @@ img.hero-background {
     opacity: 0.9;
     z-index:-10;
 }
-
+h2 {
+    font-size: 2rem;
+    margin: 5px 0 12px 0;
+    padding-bottom: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ececec;
+}
 h1.title, h1.title a {
     font-family: 'Didact Gothic';
     letter-spacing:3px;
