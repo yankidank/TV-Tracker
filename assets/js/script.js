@@ -207,18 +207,26 @@ function renderHome(){
   for(let i = 0; i < storeFetch.length; i++){
     storeFetchIDarray.push(storeFetch[i].id)
   }
-  // Return only IDs that you track and are in the upcoming schedule
-  scheduleMatchID = scheduleIDfiltered.diff(storeFetchIDarray)
-  console.log(scheduleMatchID)
-  $.each(combineScheduleMatch, function( indexout, arrout ) {
-    // Return each day's schedule as multiple arrays containing show objects
-    //console.log(arrout)
-    $.each(arrout, function( indexin, arrin ) {
-      // For each day's schedule, return the show objects
-      //console.log(arrin)
-      /////////////// TODO ///////////////
-      // Filter out show objects that don't match the stored show.id
-      // Display each show
+  // Return the tracked shows airing this week
+  combineScheduleMatch.forEach((day)=>{
+    const endResult = day.filter((singleShow,i)=>{
+      return storeFetchIDarray.includes(singleShow.show.id)
+    })
+    console.log(endResult)
+    endResult.forEach(function(scheduledItem, i){
+      var scheduleEpName = scheduledItem.name
+      var scheduleURL = scheduledItem.url
+      var scheduleSeason = scheduledItem.season
+      var scheduleEpNumber = scheduledItem.number
+      var scheduleAirdate = scheduledItem.airdate
+      var scheduleAirtime = scheduledItem.airtime
+      var scheduleSummary = scheduledItem.summary
+      var scheduleShowID = scheduledItem.show.id
+      var scheduleShowName = scheduledItem.show.name
+      var scheduleShowURL = scheduledItem.show.url
+      var scheduleShowNetwork = scheduledItem.show.network.name
+      var scheduleShowImgMed = scheduledItem.show.image.medium
+      var scheduleShowImgOrig = scheduledItem.show.image.original
     })
   })
   /////////////// TODO ///////////////
