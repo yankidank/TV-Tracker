@@ -21,9 +21,9 @@ body {
 }
 .hero-body {
     color:#fff;
-    height: 200px;
     position:relative;
     overflow:hidden;
+    padding: 2rem 1.5rem;
 }
 img.hero-background {
     position: absolute;
@@ -46,7 +46,7 @@ h1.title, h1.title a {
     letter-spacing:3px;
     color:#fff;
     font-size:3.5rem;
-    margin-top:15px;
+    padding: 18px 0;
 }
 h1.title a:hover {
     color:#b4b4b4;
@@ -192,6 +192,9 @@ h1.title a:hover {
 .new_track {
     background: rgba(81, 171, 84, 0.95);
     color: #fff;
+}
+.show_title {
+    padding-right: 10px;
 }
 .show_title a {
     text-decoration:none;
