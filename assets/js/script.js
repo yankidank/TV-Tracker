@@ -44,6 +44,9 @@ function decodeHtml(str){
   txt.innerHTML = str
   return txt.value
 }
+
+
+
 function clickSave(thisPass, id, name){
   $('#result-'+id+' div.show-star span.icon').toggleClass("icon-save")
   $('#result-'+id+' div.show-star span.icon').toggleClass("icon-remove")
@@ -312,8 +315,8 @@ function renderTV(searchQuery){
             url: 'https://www.googleapis.com/youtube/v3/search',
             data: {
               // switch key if reached max
-              key: 'AIzaSyBouMGeEVyYqBK-kOdxqvpFtRqAmefjXXo',
-              // key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
+              key: 'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
+              // key:'AIzaSyAUaopdafDf-02qXhvk-rnxyj8USkaZ5KY',
               q: searchQuery +' ('+showYear+')',
               part: 'snippet',
               maxResults: 1,
@@ -322,7 +325,7 @@ function renderTV(searchQuery){
             },
             success: function(data){
               embedVideo(data)
-            },
+            }, 
           })
         }
       
