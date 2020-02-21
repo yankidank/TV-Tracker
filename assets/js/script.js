@@ -212,7 +212,7 @@ function renderHome(){
     const endResult = day.filter((singleShow,i)=>{
       return storeFetchIDarray.includes(singleShow.show.id)
     })
-    console.log(endResult)
+    //console.log(endResult)
     endResult.forEach(function(scheduledItem, i){
       var scheduleEpName = scheduledItem.name
       var scheduleURL = scheduledItem.url
@@ -221,12 +221,16 @@ function renderHome(){
       var scheduleAirdate = scheduledItem.airdate
       var scheduleAirtime = scheduledItem.airtime
       var scheduleSummary = scheduledItem.summary
+      if (scheduleSummary === null){
+        scheduleSummary = 'Episode description not provided'
+      }
       var scheduleShowID = scheduledItem.show.id
       var scheduleShowName = scheduledItem.show.name
       var scheduleShowURL = scheduledItem.show.url
       var scheduleShowNetwork = scheduledItem.show.network.name
       var scheduleShowImgMed = scheduledItem.show.image.medium
       var scheduleShowImgOrig = scheduledItem.show.image.original
+      $('#tvColumn').append('<div class="notification tv-result" id="schedule-'+scheduleShowID+'"><div class="poster"><img src="'+scheduleShowImgOrig+'" /></div><div class="details" id="column-'+scheduleShowID+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ scheduleShowURL +'">'+ scheduleShowName +'</a></p><div class="summary" id="column-right-'+scheduleShowID+'"><p><strong><a href="'+scheduleURL+'" target="_blank">'+scheduleEpName+'</a></strong></p><p style="font-style:italic;">Season '+scheduleSeason+', Episode '+scheduleEpNumber+'</p><p>Airs '+scheduleAirdate+' at '+scheduleAirtime+' on '+scheduleShowNetwork+'</p><p>'+scheduleSummary+'</p></div></div><div class="show-star show-remove" data-id="'+scheduleShowID+'" data-title="'+scheduleShowName+'"><span class="icon icon-remove"></span></div></div>')
     })
   })
   /////////////// TODO ///////////////
