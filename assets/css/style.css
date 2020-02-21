@@ -1,5 +1,5 @@
 body {
-    font-family: 'Open Sans';
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
 }
 .button {
     margin-left:auto;
@@ -42,7 +42,7 @@ h2 {
     border-bottom: 1px solid #ececec;
 }
 h1.title, h1.title a {
-    font-family: 'Didact Gothic';
+    font-family: 'Didact Gothic', Arial, Helvetica, sans-serif;;
     letter-spacing:3px;
     color:#fff;
     font-size:3.5rem;
