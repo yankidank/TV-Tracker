@@ -186,7 +186,7 @@ Array.prototype.diff = function(arr2) {
 }
 function renderHome(){
   $("#tvColumn").empty()
-  setDates()
+  setDates() // Get the dates for the next week
   // Retrieve combined schedule info
   $.each(combineSchedule, function( index, value ) {
     dayTrack++
@@ -207,14 +207,18 @@ function renderHome(){
   for(let i = 0; i < storeFetch.length; i++){
     storeFetchIDarray.push(storeFetch[i].id)
   }
-  // Filter out repeating IDs
+  // Return only IDs that you track and are in the upcoming schedule
   scheduleMatchID = scheduleIDfiltered.diff(storeFetchIDarray)
-  /////////////// TODO ///////////////
-  // Find shows that you track that are in the schedule
+  console.log(scheduleMatchID)
   $.each(combineScheduleMatch, function( indexout, arrout ) {
+    // Return each day's schedule as multiple arrays containing show objects
     //console.log(arrout)
     $.each(arrout, function( indexin, arrin ) {
+      // For each day's schedule, return the show objects
       //console.log(arrin)
+      /////////////// TODO ///////////////
+      // Filter out show objects that don't match the stored show.id
+      // Display each show
     })
   })
   /////////////// TODO ///////////////
