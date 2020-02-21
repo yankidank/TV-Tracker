@@ -230,7 +230,7 @@ function renderHome(){
       if($("#dow-" + dow).length == 0) {
         $('#tvColumn').append('<h2 id="dow-'+dow+'">'+dow+'</h2>')
       }
-      $('#tvColumn').append('<div class="notification tv-result" id="schedule-'+scheduleShowID+'"><div class="poster"><img src="'+scheduleShowImgMed+'" /></div><div class="details" id="column-'+scheduleShowID+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ scheduleShowURL +'">'+ scheduleShowName +'</a></p><div class="summary" id="column-right-'+scheduleShowID+'"><p class="ep_title"><a href="'+scheduleURL+'" target="_blank">'+scheduleEpName+'</a></p><p style="font-style:italic;">Season '+scheduleSeason+', Episode '+scheduleEpNumber+'</p><p>'+scheduleSummary+'</p><div class="air_status">Airs '+scheduleAirdate+' at '+scheduleAirtime+' on '+scheduleShowNetwork+'</div></div></div><div class="show-star show-remove" data-id="'+scheduleShowID+'" data-title="'+scheduleShowName+'"><span class="icon icon-remove"></span></div></div>')
+      $('#tvColumn').append('<div class="notification tv-result" id="schedule-'+scheduleShowID+'"><div class="poster"><img src="'+scheduleShowImgMed+'" /></div><div class="details" id="column-'+scheduleShowID+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ scheduleShowURL +'">'+ scheduleShowName +'</a></p><div class="summary" id="column-right-'+scheduleShowID+'"><p class="ep_title"><a href="'+scheduleURL+'" target="_blank">'+scheduleEpName+'</a></p><p style="font-style:italic;">Season '+scheduleSeason+', Episode '+scheduleEpNumber+'</p><p>'+scheduleSummary+'</p><div class="air_status">Airs '+moment(scheduleAirdate.slice(5)).format("MMM Do")+' at '+timeConvert(scheduleAirtime)+' on '+scheduleShowNetwork+'</div></div></div><div class="show-star show-remove" data-id="'+scheduleShowID+'" data-title="'+scheduleShowName+'"><span class="icon icon-remove"></span></div></div>')
     })
   })
   if ($('#tvColumn').is(':empty')){
@@ -498,7 +498,8 @@ function removeHash () {
   history.pushState("", document.title, window.location.pathname + window.location.search);
 }
 function timeConvert(APItime){
-  var string = APItime.slice(0, -3);
+  var minute = APItime.slice(3, 5)
+  var string = APItime.slice(0, -3)
   if (string < 12){
     AMPM = ' AM'
   } else {
@@ -512,7 +513,11 @@ function timeConvert(APItime){
   if (itemTwelve == 0){
     itemTwelve = 12
   }
-  return itemTwelve + AMPM
+  if (minute != '00'){
+    return itemTwelve + ':' + minute + AMPM
+  } else {
+    return itemTwelve + AMPM
+  }
 }
 renderHome()
 $(document).ready(function(){
