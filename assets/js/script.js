@@ -109,8 +109,6 @@ function clickRemove(thisPass, id){
   setTimeout(function(){
   $('[data-side-id="side_'+id+'"]').fadeOut( "slow", function() {
     $('[data-side-id="side_'+id+'"]').remove()
-    console.log(storeFetch)
-    console.log('storefetch?')
     if (storeFetch.length === 0){
       $("#tracking_side").append('<div class="side_show_list side_show_list_empty">You are not tracking any shows</div>')
     }
@@ -124,7 +122,6 @@ function renderSchedule(){
   if (storeFetch.length === 0){
     $("#tracking_side").append('<div class="side_show_list side_show_list_empty">You are not tracking any shows</div>')
   }
-  //console.log(storeFetch)
   $('[data-side-id]').each(function(){
     var $this = $(this)
     if(found[$this.data('side-id')]){
@@ -213,7 +210,6 @@ function renderHome(){
       return storeFetchIDarray.includes(singleShow.show.id)
     })
     endResult.forEach(function(scheduledItem, i){
-      console.log(i)
       var scheduleEpName = scheduledItem.name
       var scheduleURL = scheduledItem.url
       var scheduleSeason = scheduledItem.season
@@ -230,11 +226,39 @@ function renderHome(){
       var scheduleShowNetwork = scheduledItem.show.network.name
       var scheduleShowImgMed = scheduledItem.show.image.medium
       var scheduleShowImgOrig = scheduledItem.show.image.original
+      var showTvdb = scheduledItem.show.externals.thetvdb
       var dow = moment(scheduleAirdate).format('dddd')
       if($("#dow-" + dow).length == 0) {
         $('#tvColumn').append('<h2 id="dow-'+dow+'">'+dow+'</h2>')
       }
-      $('#tvColumn').append('<div class="notification tv-result" id="schedule-'+scheduleShowID+'"><div class="poster"><img src="'+scheduleShowImgOrig+'" /></div><div class="details" id="column-'+scheduleShowID+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ scheduleShowURL +'">'+ scheduleShowName +'</a></p><div class="summary" id="column-right-'+scheduleShowID+'"><p class="ep_title"><a href="'+scheduleURL+'" target="_blank">'+scheduleEpName+'</a></p><p style="font-style:italic;">Season '+scheduleSeason+', Episode '+scheduleEpNumber+'</p><p>'+scheduleSummary+'</p><div class="air_status">Airs '+scheduleAirdate+' at '+scheduleAirtime+' on '+scheduleShowNetwork+'</div></div></div><div class="show-star show-remove" data-id="'+scheduleShowID+'" data-title="'+scheduleShowName+'"><span class="icon icon-remove"></span></div></div>')
+      $('#tvColumn').append('<div class="notification tv-result schedule-'+scheduleShowID+'"><div class="poster"><img src="'+scheduleShowImgMed+'" /></div><div class="details" id="column-'+scheduleShowID+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ scheduleShowURL +'">'+ scheduleShowName +'</a></p><div class="summary" id="column-right-'+scheduleShowID+'"><p class="ep_title"><a href="'+scheduleURL+'" target="_blank">'+scheduleEpName+'</a></p><p style="font-style:italic;">Season '+scheduleSeason+', Episode '+scheduleEpNumber+'</p><p>'+scheduleSummary+'</p><div class="air_status">Airs '+moment(scheduleAirdate.slice(5)).format("MMM Do")+' at '+timeConvert(scheduleAirtime)+' on '+scheduleShowNetwork+'</div></div></div><div class="show-star show-remove" data-id="'+scheduleShowID+'" data-title="'+scheduleShowName+'"><span class="icon icon-remove"></span></div></div>')
+      fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
+      $.ajax({
+        type: 'GET',
+        url: fanartAPISearch,
+        success: function(fanart) {
+          if (fanart.hdclearart && fanart.hdclearart[0].url){
+            bgImage = fanart.hdclearart[0].url
+          } else if (fanart.showbackground && fanart.showbackground[0].url){
+            bgImage = fanart.showbackground[0].url
+          } else if (fanart.tvposter && fanart.tvposter[0].url){
+            bgImage = fanart.tvposter[0].url
+          } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
+            bgImage = fanart.hdtvlogo[0].url
+          } else {
+            bgImage = showImg
+          }
+          $(".schedule-"+scheduleShowID+" .tv-background").empty()
+          $(".schedule-"+scheduleShowID).append('<img class="tv-background" id="background_image_'+scheduleShowID+'" src="'+bgImage+'" />')
+        },
+        error: function(e) {
+          bgImage = scheduleShowImgOrig
+          //console.log(e.responseJSON.status)
+          //console.log(e.responseJSON['error message'])
+          $(".schedule-"+scheduleShowID+" .tv-background").empty()
+          $(".schedule-"+scheduleShowID).append('<img class="tv-background background-push" id="background_image_'+val.id+'" src="'+bgImage+'" />')
+        }
+      })
     })
   })
   if ($('#tvColumn').is(':empty')){
@@ -412,7 +436,6 @@ function showFanart(val){
     type: 'GET',
     url: fanartAPISearch,
     success: function(fanart) {
-      //console.log(fanart)
       if (fanart.hdclearart && fanart.hdclearart[0].url){
         bgImage = fanart.hdclearart[0].url
       } else if (fanart.showbackground && fanart.showbackground[0].url){
@@ -424,8 +447,6 @@ function showFanart(val){
       } else {
         bgImage = showImg
       }
-      //console.log(bgImage)
-      //console.log(val.id)
       $("#result-"+val.id+" .tv-background").empty()
       $("#result-"+val.id).append('<img class="tv-background" id="background_image_'+val.id+'" src="'+bgImage+'" />')
     },
@@ -475,8 +496,6 @@ function renderTV(searchQuery){
       // Remove previous search results
       $("#tvColumn").empty()
       tv.forEach(function(val) {
-        //console.log(index)
-        //console.log(val)
         setTvmazeVariables(val.show)
         showSearchTemplate(val.show)
         showFanart(val.show)
@@ -495,7 +514,6 @@ function renderShow(showId){
     success: function(val) {
       // Remove previous search results
       $("#tvColumn").empty()
-      //console.log(val)
       setTvmazeVariables(val)
       showSearchTemplate(val)
       showFanart(val)
@@ -508,7 +526,8 @@ function removeHash () {
   history.pushState("", document.title, window.location.pathname + window.location.search);
 }
 function timeConvert(APItime){
-  var string = APItime.slice(0, -3);
+  var minute = APItime.slice(3, 5)
+  var string = APItime.slice(0, -3)
   if (string < 12){
     AMPM = ' AM'
   } else {
@@ -522,7 +541,11 @@ function timeConvert(APItime){
   if (itemTwelve == 0){
     itemTwelve = 12
   }
-  return itemTwelve + AMPM
+  if (minute != '00'){
+    return itemTwelve + ':' + minute + AMPM
+  } else {
+    return itemTwelve + AMPM
+  }
 }
 renderHome()
 $(document).ready(function(){
