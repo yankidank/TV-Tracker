@@ -226,11 +226,39 @@ function renderHome(){
       var scheduleShowNetwork = scheduledItem.show.network.name
       var scheduleShowImgMed = scheduledItem.show.image.medium
       var scheduleShowImgOrig = scheduledItem.show.image.original
+      var showTvdb = scheduledItem.show.externals.thetvdb
       var dow = moment(scheduleAirdate).format('dddd')
       if($("#dow-" + dow).length == 0) {
         $('#tvColumn').append('<h2 id="dow-'+dow+'">'+dow+'</h2>')
       }
-      $('#tvColumn').append('<div class="notification tv-result" id="schedule-'+scheduleShowID+'"><div class="poster"><img src="'+scheduleShowImgMed+'" /></div><div class="details" id="column-'+scheduleShowID+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ scheduleShowURL +'">'+ scheduleShowName +'</a></p><div class="summary" id="column-right-'+scheduleShowID+'"><p class="ep_title"><a href="'+scheduleURL+'" target="_blank">'+scheduleEpName+'</a></p><p style="font-style:italic;">Season '+scheduleSeason+', Episode '+scheduleEpNumber+'</p><p>'+scheduleSummary+'</p><div class="air_status">Airs '+moment(scheduleAirdate.slice(5)).format("MMM Do")+' at '+timeConvert(scheduleAirtime)+' on '+scheduleShowNetwork+'</div></div></div><div class="show-star show-remove" data-id="'+scheduleShowID+'" data-title="'+scheduleShowName+'"><span class="icon icon-remove"></span></div></div>')
+      $('#tvColumn').append('<div class="notification tv-result schedule-'+scheduleShowID+'"><div class="poster"><img src="'+scheduleShowImgMed+'" /></div><div class="details" id="column-'+scheduleShowID+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ scheduleShowURL +'">'+ scheduleShowName +'</a></p><div class="summary" id="column-right-'+scheduleShowID+'"><p class="ep_title"><a href="'+scheduleURL+'" target="_blank">'+scheduleEpName+'</a></p><p style="font-style:italic;">Season '+scheduleSeason+', Episode '+scheduleEpNumber+'</p><p>'+scheduleSummary+'</p><div class="air_status">Airs '+moment(scheduleAirdate.slice(5)).format("MMM Do")+' at '+timeConvert(scheduleAirtime)+' on '+scheduleShowNetwork+'</div></div></div><div class="show-star show-remove" data-id="'+scheduleShowID+'" data-title="'+scheduleShowName+'"><span class="icon icon-remove"></span></div></div>')
+      fanartAPISearch = 'https://webservice.fanart.tv/v3/tv/'+showTvdb+'?api_key='+fanartAPI
+      $.ajax({
+        type: 'GET',
+        url: fanartAPISearch,
+        success: function(fanart) {
+          if (fanart.hdclearart && fanart.hdclearart[0].url){
+            bgImage = fanart.hdclearart[0].url
+          } else if (fanart.showbackground && fanart.showbackground[0].url){
+            bgImage = fanart.showbackground[0].url
+          } else if (fanart.tvposter && fanart.tvposter[0].url){
+            bgImage = fanart.tvposter[0].url
+          } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
+            bgImage = fanart.hdtvlogo[0].url
+          } else {
+            bgImage = showImg
+          }
+          $(".schedule-"+scheduleShowID+" .tv-background").empty()
+          $(".schedule-"+scheduleShowID).append('<img class="tv-background" id="background_image_'+scheduleShowID+'" src="'+bgImage+'" />')
+        },
+        error: function(e) {
+          bgImage = scheduleShowImgOrig
+          //console.log(e.responseJSON.status)
+          //console.log(e.responseJSON['error message'])
+          $(".schedule-"+scheduleShowID+" .tv-background").empty()
+          $(".schedule-"+scheduleShowID).append('<img class="tv-background background-push" id="background_image_'+val.id+'" src="'+bgImage+'" />')
+        }
+      })
     })
   })
   if ($('#tvColumn').is(':empty')){
