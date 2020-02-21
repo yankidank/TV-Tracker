@@ -1,3 +1,6 @@
+body {
+    font-family: 'Open Sans';
+}
 .button {
     margin-left:auto;
 }
@@ -17,16 +20,29 @@
     display: flex;
 }
 .hero-body {
-    background: url(../img/tvshows.png);
-    background-position: center; 
     color:#fff;
-    height: 300px;
-    opacity: 0.4;
+    height: 200px;
+    position:relative;
+    overflow:hidden;
 }
-.title, .title a {
+img.hero-background {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    opacity: 0.9;
+    z-index:-10;
+}
+
+h1.title, h1.title a {
+    font-family: 'Didact Gothic';
+    letter-spacing:3px;
     color:#fff;
+    font-size:3.5rem;
+    margin-top:20px;
 }
-.title a:hover {
+h1.title a:hover {
     color:#b4b4b4;
 }
 .poster {
@@ -216,4 +232,9 @@
 }
 .imdb_score {
     z-index:2;
+}
+.ep_title {
+    margin-top:4px;
+    font-weight:700;
+    font-size:1.2rem;
 }
