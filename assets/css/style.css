@@ -8,9 +8,8 @@ body {
     align-items: right;
 }
 .details {
-    max-width: 650px;
+    max-width: 720px;
     padding: 0 5px 0 15px;
-    float: left;
     display: inline-block;
 }
 .tv-result {
