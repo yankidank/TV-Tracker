@@ -126,7 +126,7 @@ function renderSchedule(){
   $('[data-side-id]').each(function(){
     var $this = $(this)
     if(found[$this.data('side-id')]){
-      $this.remove() // This section is breaking the save icon toggle
+      $this.remove()
     }
     else{
       found[$this.data('side-id')] = true
@@ -559,7 +559,6 @@ function timeConvert(APItime){
     return itemTwelve + AMPM
   }
 }
-renderHome()
 $(document).ready(function(){
   removeHash()
   renderSchedule() // Display tracked show data
@@ -613,4 +612,5 @@ $(document).ready(function(){
       }
     }, 25)
   })
+  renderHome()
 })
