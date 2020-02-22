@@ -1,3 +1,6 @@
+body {
+    font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+}
 .button {
     margin-left:auto;
 }
@@ -5,9 +8,8 @@
     align-items: right;
 }
 .details {
-    max-width: 650px;
+    max-width: 720px;
     padding: 0 5px 0 15px;
-    float: left;
     display: inline-block;
 }
 .tv-result {
@@ -17,16 +19,35 @@
     display: flex;
 }
 .hero-body {
-    background: url(../img/tvshows.png);
-    background-position: center; 
     color:#fff;
-    height: 300px;
-    opacity: 0.4;
+    position:relative;
+    overflow:hidden;
+    padding: 2rem 1.5rem;
 }
-.title, .title a {
+img.hero-background {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    opacity: 0.9;
+    z-index:-10;
+}
+h2 {
+    font-size: 2rem;
+    margin: 5px 0 12px 0;
+    padding-bottom: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ececec;
+}
+h1.title, h1.title a {
+    font-family: 'Didact Gothic', Arial, Helvetica, sans-serif;;
+    letter-spacing:3px;
     color:#fff;
+    font-size:3.5rem;
+    padding: 18px 0;
 }
-.title a:hover {
+h1.title a:hover {
     color:#b4b4b4;
 }
 .poster {
@@ -171,6 +192,9 @@
     background: rgba(81, 171, 84, 0.95);
     color: #fff;
 }
+.show_title {
+    padding-right: 10px;
+}
 .show_title a {
     text-decoration:none;
 }
@@ -216,4 +240,9 @@
 }
 .imdb_score {
     z-index:2;
+}
+.ep_title {
+    margin-top:4px;
+    font-weight:700;
+    font-size:1.2rem;
 }
