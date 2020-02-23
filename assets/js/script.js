@@ -272,11 +272,9 @@ function renderHome(){
     })
   })
   if ($('#tvColumn').is(':empty')){
-    // If no scheduled items appear, or if you aren't tracking anything,
-    // display a homepage with popular shows in the search result format
-    $('#tvColumn').append('<h2>This week\'s schedule</h2> ')
+    $('#tvColumn').append('<h2>This week\'s schedule</h2>')
     $('#tvColumn').append('<div class="notification tv-result">No tracked shows are airing this week</div>')
-  }  
+  }
 }
 function setTvmazeVariables(val){
   if (val.image){
