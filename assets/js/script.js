@@ -70,8 +70,6 @@ function decodeHtml(str){
   return txt.value
 }
 function clickSave(thisPass, id, name){
-  $('#result-'+id+' div.show-star span.icon').toggleClass("icon-save")
-  $('#result-'+id+' div.show-star span.icon').toggleClass("icon-remove")
   $(".side_show_list_empty").remove()
   $("#tracking_side").append('<div class="side_show_list" id="side_track_'+id+'" data-side-id="side_'+id+'"><i class="icon icon-remove sidebar_show_remove" data-side-bookmark="side_bookmark_'+id+'"></i><span class="sidebar_show_span"><a class="sidebar_show_link" href="#'+id+'">'+name+'</a></span></div>')
   $('[data-side-id="side_'+id+'"]').removeClass('remove_track')
@@ -82,15 +80,17 @@ function clickSave(thisPass, id, name){
     $('[data-side-id="side_'+id+'"]').removeClass('new_track')
   }, 1000)
   // Check if the sidebar item already exists
-  $('[data-side-id]').each(function(){
+  // Needs work. Prevents the save star icon toggle from results
+  /* $('[data-side-id]').each(function(){
     var $thisPass = $(thisPass)
+    //console.log($thisPass)
     if(found[$thisPass.data('side-id')]){
-      $thisPass.remove()
+     $thisPass.remove()
     }
     else{
       found[$thisPass.data('side-id')] = true;   
     }
-  })
+  }) */
   trimArray = storeFetch.filter(function(obj) {
     return obj.id !== id
   })
@@ -273,11 +273,9 @@ function renderHome(){
     })
   })
   if ($('#tvColumn').is(':empty')){
-    // If no scheduled items appear, or if you aren't tracking anything,
-    // display a homepage with popular shows in the search result format
-    $('#tvColumn').append('<h2>This week\'s schedule</h2> ')
+    $('#tvColumn').append('<h2>This week\'s schedule</h2>')
     $('#tvColumn').append('<div class="notification tv-result">No tracked shows are airing this week</div>')
-  }  
+  }
 }
 function setTvmazeVariables(val){
   if (val.image){
@@ -405,9 +403,13 @@ function showSearchTemplate(val){
   }
   $('#result-'+val.id+' div span.icon-remove').click(function(){
     clickRemove(this, val.id)
+    $('#result-'+val.id+' div.show-star span.icon').addClass("icon-save")
+    $('#result-'+val.id+' div.show-star span.icon').removeClass("icon-remove")
   })
   $('#result-'+val.id+' div span.icon-save').click(function(){
     clickSave(this, val.id, val.name)
+    $('#result-'+val.id+' div.show-star span.icon').removeClass("icon-save")
+    $('#result-'+val.id+' div.show-star span.icon').addClass("icon-remove")
   })
   $('#column-'+val.id).append('<div class="summary" id="column-right-'+val.id+'">')
   shortTSummary = decodeHtml(jQuery.trim(showSummary).substring(0, 250))
