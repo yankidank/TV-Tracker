@@ -607,7 +607,7 @@ $(document).ready(function(){
         newhash = window.location.hash.substring(1)
         if (oldhash !== newhash){
           renderShow(newhash)
-          $("html, body").animate({ scrollTop: 430 }, "slow")
+          $("html, body").animate({ scrollTop: 200 }, "slow")
         }
         oldhash = newhash
       }
