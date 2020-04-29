@@ -51,6 +51,7 @@ storeFetch = JSON.parse(storeFetch)
 if (!storeFetch || jQuery.isEmptyObject(storeFetch[0]) ){
   storeFetch = []
 }
+
 function addShow(array, transferID, transferTitle) {
   const { length } = array
   const found = array.some(el => el.id === transferID)
@@ -152,6 +153,23 @@ function setDates(){ // Retrieves the schedule for the upcoming week
     scheduleDate6,
     scheduleDate7
   ]
+
+  // Retrieve current localStorage keys
+  const items = Object.keys(localStorage)
+  var storedKeys = []
+  for(let i = 0; i < items.length; i++){
+    storedKeys.push(items[i].substr(7))
+  }
+  // Find keys that are out of date
+  let storedRemove = scheduleDatesArr
+    .filter(x => !storedKeys.includes(x))
+    .concat(storedKeys.filter(x => !scheduleDatesArr.includes(x)));
+  storedRemove = storedRemove.map(i => 'TV_Day_' + i);
+  // Remove old data
+  for(let i = 0; i < storedRemove.length; i++){
+    localStorage.removeItem(storedRemove[i]);
+  }
+  
   for(let i = 0; i < scheduleDatesArr.length; i++){
     storeDatesArr = localStorage.getItem('TV_Day_'+scheduleDatesArr[i])
     storeDatesArr = JSON.parse(storeDatesArr)
@@ -272,7 +290,7 @@ function renderHome(){
       })
     })
   })
-  if ($('#tvColumn').is(':empty')){
+  if (storeFetch.length === 0){
     $('#tvColumn').append('<h2>This week\'s schedule</h2>')
     $('#tvColumn').append('<div class="notification tv-result">No tracked shows are airing this week</div>')
   }
