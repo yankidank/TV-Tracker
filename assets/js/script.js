@@ -242,7 +242,8 @@ function renderHome(){
       if($("#dow-" + dow).length == 0) {
         $('#tvColumn').append('<h2 id="dow-'+dow+'">'+dow+'</h2>')
       }
-      $('#tvColumn').append('<div class="notification tv-result schedule-'+scheduleShowID+'" id="result-'+scheduleShowID+'"><div class="poster"><img src="'+scheduleShowImgMed+'" /></div><div class="details" id="column-'+scheduleShowID+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ scheduleShowURL +'">'+ scheduleShowName +'</a></p><div class="summary" id="column-right-'+scheduleShowID+'"><p class="ep_title"><a href="'+scheduleURL+'" target="_blank">'+scheduleEpName+'</a></p><p style="font-style:italic;">Season '+scheduleSeason+', Episode '+scheduleEpNumber+'</p><p>'+scheduleSummary+'</p><div class="air_status">Airs '+moment(scheduleAirdate.slice(5)).format("MMM Do")+' at '+timeConvert(scheduleAirtime)+' on '+scheduleShowNetwork+'</div></div></div><div class="show-star show-remove" data-id="'+scheduleShowID+'" data-title="'+scheduleShowName+'"><span class="icon icon-remove"></span></div></div>')
+      var momentAirs = moment(scheduleAirdate).format("MMM Do")+' at '+timeConvert(scheduleAirtime);
+      $('#tvColumn').append('<div class="notification tv-result schedule-'+scheduleShowID+'" id="result-'+scheduleShowID+'"><div class="poster"><img src="'+scheduleShowImgMed+'" /></div><div class="details" id="column-'+scheduleShowID+'"><p class="is-size-4 show_title"><a target="_blank" href="'+ scheduleShowURL +'">'+ scheduleShowName +'</a></p><div class="summary" id="column-right-'+scheduleShowID+'"><p class="ep_title"><a href="'+scheduleURL+'" target="_blank">'+scheduleEpName+'</a></p><p style="font-style:italic;">Season '+scheduleSeason+', Episode '+scheduleEpNumber+'</p><p>'+scheduleSummary+'</p><div class="air_status">Airs '+momentAirs+' on '+scheduleShowNetwork+'</div></div></div><div class="show-star show-remove" data-id="'+scheduleShowID+'" data-title="'+scheduleShowName+'"><span class="icon icon-remove"></span></div></div>')
       $('#result-'+scheduleShowID+' div span.icon-remove').click(function(){
         clickRemove(this, scheduleShowID)
         $('#result-'+scheduleShowID+' div.show-star span.icon').addClass("icon-save")
@@ -460,16 +461,18 @@ function showFanart(val){
     url: fanartAPISearch,
     success: function(fanart) {
       bgImage = ''
-      if (fanart.hdclearart && fanart.hdclearart[0].url){
-        bgImage = fanart.hdclearart[0].url
-      } else if (fanart.showbackground && fanart.showbackground[0].url){
-        bgImage = fanart.showbackground[0].url
-      } else if (fanart.tvposter && fanart.tvposter[0].url){
-        bgImage = fanart.tvposter[0].url
-      } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
-        bgImage = fanart.hdtvlogo[0].url
-      } else {
-        bgImage = showImg
+      if (fanart){
+        if (fanart.hdclearart && fanart.hdclearart[0].url){
+          bgImage = fanart.hdclearart[0].url
+        } else if (fanart.showbackground && fanart.showbackground[0].url){
+          bgImage = fanart.showbackground[0].url
+        } else if (fanart.tvposter && fanart.tvposter[0].url){
+          bgImage = fanart.tvposter[0].url
+        } else if (fanart.hdtvlogo && fanart.hdtvlogo[0].url){
+          bgImage = fanart.hdtvlogo[0].url
+        } else {
+          bgImage = showImg
+        }
       }
       $("#background_image_"+val.id).empty()
       $("#result-"+val.id).append('<img class="tv-background" id="background_image_'+val.id+'" src="'+bgImage+'" />')
