@@ -270,6 +270,13 @@ function renderHome(){
           } else {
             bgImage = showImg
           }
+
+          // Assets subdomain currently returns a 502 error
+          // Remove the subdomain from fanart URLs
+          const regex = /assets./gi;
+          const trimAssetUrl = bgImage.replace(regex, '')
+          bgImage = trimAssetUrl
+
           $(".schedule-"+scheduleShowID+" .tv-background").empty()
           $(".schedule-"+scheduleShowID).append('<img class="tv-background" id="background_image_'+scheduleShowID+'" src="'+bgImage+'" />')
         },
@@ -473,6 +480,13 @@ function showFanart(val){
         } else {
           bgImage = showImg
         }
+
+        // Assets subdomain currently returns a 502 error
+        // Remove the subdomain from fanart URLs
+        const regex = /assets./gi;
+        const trimAssetUrl = bgImage.replace(regex, '')
+        bgImage = trimAssetUrl
+        
       }
       $("#background_image_"+val.id).empty()
       $("#result-"+val.id).append('<img class="tv-background" id="background_image_'+val.id+'" src="'+bgImage+'" />')
@@ -494,7 +508,7 @@ function renderTV(searchQuery){
       data: {
         // switch key if reached max
         //key: 'AIzaSyBouMGeEVyYqBK-kOdxqvpFtRqAmefjXXo',
-        key:'AIzaSyBR9R0HWwxFiBHqI4lXjjDhajBe4Idl6wE',
+        key:'AIzaSyAdVwnmdySiU8kRBVYoXEphiYgISW_q6_Y',
         q: searchQuery +' tv trailer',
         part: 'snippet',
         maxResults: 1,
